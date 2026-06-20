@@ -2,7 +2,7 @@ import React from 'react';
 import { useLanguage } from '@/i18n/LanguageContext';
 import { fullCatalog } from '@/data/catalog';
 import { gallery } from '@/data/gallery';
-import { partners } from '@/data/partners';
+import { partners, partnerMarquee } from '@/data/partners';
 import { ProductCard } from '@/components/shared/ProductCard';
 import { Button } from '@/components/ui/button';
 import { Link } from 'wouter';
@@ -51,14 +51,12 @@ export default function Home() {
 
       {/* Partners Marquee */}
       <section className="border-b border-border bg-card py-6 overflow-hidden">
-        <div className="container mx-auto">
-          <div className="flex gap-8 items-center animate-marquee whitespace-nowrap opacity-60">
-            {[...partners, ...partners].map((partner, i) => (
-              <div key={i} className="text-sm font-semibold tracking-wider uppercase flex-shrink-0">
-                {partner}
-              </div>
-            ))}
-          </div>
+        <div className="flex gap-10 items-center animate-marquee whitespace-nowrap opacity-60">
+          {[...partnerMarquee, ...partnerMarquee].map((name, i) => (
+            <div key={i} className="text-sm font-semibold tracking-wider uppercase flex-shrink-0 px-2">
+              {name}
+            </div>
+          ))}
         </div>
       </section>
 
@@ -151,6 +149,60 @@ export default function Home() {
                       </CardContent>
                     </Link>
                   </Card>
+                </motion.div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* Partners & Certifications Section */}
+      <section className="py-20 md:py-28 bg-background">
+        <div className="container mx-auto px-4">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-14"
+          >
+            <h2 className="font-serif text-3xl md:text-5xl font-bold text-foreground mb-4">
+              {t('home.partnersTitle')}
+            </h2>
+            <p className="text-muted-foreground text-base md:text-lg max-w-xl mx-auto">
+              {t('home.partnersSubtitle')}
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5 md:gap-6">
+            {partners.map((partner, i) => {
+              const name = language === 'ar' ? partner.nameAR : partner.nameFR;
+              const desc = language === 'ar' ? partner.descriptionAR : partner.descriptionFR;
+              const typeColors: Record<string, string> = {
+                brand: 'bg-primary/8 border-primary/20 hover:border-primary/50',
+                certificate: 'bg-amber-500/8 border-amber-500/20 hover:border-amber-500/50',
+                award: 'bg-emerald-500/8 border-emerald-500/20 hover:border-emerald-500/50',
+              };
+              const iconColors: Record<string, string> = {
+                brand: 'bg-primary/15 text-primary',
+                certificate: 'bg-amber-500/15 text-amber-600 dark:text-amber-400',
+                award: 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400',
+              };
+              return (
+                <motion.div
+                  key={partner.id}
+                  initial={{ opacity: 0, y: 16 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.07 }}
+                  className={`group flex flex-col items-center gap-4 rounded-2xl border p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg cursor-default ${typeColors[partner.type]}`}
+                >
+                  <div className={`w-14 h-14 rounded-xl flex items-center justify-center font-bold text-sm tracking-widest ${iconColors[partner.type]}`}>
+                    {partner.icon}
+                  </div>
+                  <div className="text-center">
+                    <div className="font-semibold text-foreground text-sm leading-snug mb-1">{name}</div>
+                    <div className="text-xs text-muted-foreground">{desc}</div>
+                  </div>
                 </motion.div>
               );
             })}

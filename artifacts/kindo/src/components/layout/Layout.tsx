@@ -8,14 +8,17 @@ export function Layout({ children }: { children: React.ReactNode }) {
   
   return (
     <div className="min-h-screen flex flex-col w-full bg-background text-foreground selection:bg-primary/20 selection:text-primary">
-      {/* Promo Banner */}
-      <div className="bg-primary text-primary-foreground text-xs md:text-sm font-medium py-2 px-4 text-center">
-        {t('home.promoText')}
+      {/* Fixed header wrapper: promo banner + navbar together */}
+      <div className="fixed top-0 w-full z-50 flex flex-col">
+        {/* Promo Banner */}
+        <div className="bg-primary text-primary-foreground text-xs md:text-sm font-medium py-2 px-4 text-center">
+          {t('home.promoText')}
+        </div>
+        <Navbar />
       </div>
-      
-      <Navbar />
-      
-      <main className="flex-1 w-full pt-16">
+
+      {/* Offset for promo (~32px) + navbar (64px) */}
+      <main className="flex-1 w-full pt-[96px]">
         {children}
       </main>
       
