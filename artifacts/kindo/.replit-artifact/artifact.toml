@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/"
+title = "Kindo Pet Supply"
+version = "1.0.0"
+id = "artifacts/kindo"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 24136
+
+[services.development]
+run = "pnpm --filter @workspace/kindo run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/kindo", "run", "build" ]
+publicDir = "artifacts/kindo/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "24136"
+BASE_PATH = "/"

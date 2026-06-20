@@ -1,0 +1,54 @@
+Role: Expert Frontend Web Developer, UI/UX Architect, and Cloudflare Pages Optimization Specialist
+
+Project Overview:
+Build an ultra-modern, highly sophisticated web application for "Kindo," a premium pet supply brand specializing in high-quality food and accessories. The platform functions exclusively as a high-converting digital catalog. There is NO shopping cart, NO checkout system, and NO user account management. Instead, it utilizes a high-conversion, direct-to-WhatsApp communication funnel.
+
+Deployment Target: 
+- Cloudflare Pages (Jamstack Architecture). 
+- The entire application must be built using purely static/client-side rendering.
+- STRICT CONSTRAINT: Do NOT install, initialize, or write code for external backend platforms like Supabase, Firebase, or Node-based server environments.
+
+Data & State Architecture:
+- Store all application data (Products, Accessories, Gallery articles, Partner lists) inside dedicated static local TypeScript mock data structures (e.g., `src/data/catalog.ts` and `src/data/gallery.ts`).
+- Fully drive all search, client-side pagination, filters, and language routing using these local arrays. Ensure components accept data gracefully via props or clean React Context so it can easily wire into a Cloudflare D1 database or Worker API down the road.
+
+Internationalization & UI Core:
+- Multilingual Support: Full French (FR) and Arabic (AR) toggle.
+- RTL Layout Guardrails: When Arabic is active, the layout must smoothly adapt natively to Right-to-Left (RTL) reading standards (e.g., flipping navigation sidebars, text alignments, icons, and carousels using Tailwind CSS logic).
+- Theme: Premium, flawless Light/Dark mode native toggle.
+
+Design & UI/UX Requirements:
+- Aesthetic: Extremely modern, premium, minimalist, and sleek (matching high-end SaaS or luxury brand interfaces). Utilize smooth CSS transitions, crisp typography, and precise spatial padding.
+- Responsiveness: Fully fluid across mobile, tablet, and desktop viewports.
+- Pagination: Strict client-side layout enforcement of exactly 10 products per grid view page, managed with modern pagination controls.
+
+Application Architecture & Routing:
+
+1. Top Promo Banner & Global Header:
+   - Fixed or carousel promo space at the very top for rotating media images, seasonal announcements, or active discounts.
+   - Global Search & Filter: Interactive search field paired with tag-based filtering (by Animal Category [Dogs, Cats, Birds, Fish], Item Classification [Food, Accessory], and Price Range).
+   - Navbar: Home, À Propos (About), Animal Dropdowns (Dogs, Cats, Birds, Fish -> Sub-menus: Food / Accessories), Contact Us.
+   - Interactive widgets for Language selection and Light/Dark toggling.
+
+2. Homepage Canvas:
+   - High-impact visual Hero segment showing strong value propositions.
+   - B2B Trust Marquee: Clean slider/grid containing partner logotypes, certificates, and quality badges.
+   - Highlights Section: Tabs displaying a 10-item grid of hot items.
+
+3. Interactive Catalog (Grid System):
+   - Structured into clean, high-end product cards showing: Product Images, Title, Price, and a prominent "Order via WhatsApp" Call-To-Action.
+   - The WhatsApp CTA must trigger a direct external link protocol opening `https://wa.me/` with a pre-filled, URL-encoded string detailing the product intent (e.g., "Bonjour Kindo, je souhaite commander le produit: [Product Name]").
+
+4. Product Detail Views (PDP):
+   - Dynamic view on-click presenting an image carousel, descriptive rich text blocks, and technical specs tables.
+   - A client-side "Recommended Items" slider filtering relative products matching the active animal category.
+
+5. Dynamic Hub (News & Gallery):
+   - Clean masonry or card layout highlighting a full-width background preview image with content text elegantly overlaid.
+   - On-click routing opens clean, article-style standalone static views.
+
+6. Layout Footer:
+   - Functional site links, direct WhatsApp communication shortcuts, localized social link integrations (such as a structured Facebook icon module).
+
+Deliverables:
+Provide the fully operational standalone application source code conforming to these instructions using React/Next.js (Static Export configuration) or Vite + React with Tailwind CSS, utilizing zero third-party cloud data dependencies.

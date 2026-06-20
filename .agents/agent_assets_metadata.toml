@@ -1,0 +1,8 @@
+uploads = []
+outputs = []
+
+[[generated]]
+id = "p9Rbkip-ScQRk0UIs1DRg"
+uri = "file://src/assets/images/hero-1.png"
+type = "image"
+title = "Luxury pet store hero image"
