@@ -4,7 +4,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeProvider } from "next-themes";
 import { LanguageProvider } from "@/i18n/LanguageContext";
-import { StoreProvider } from "@/lib/StoreContext";
+import { StoreProvider, useStore } from "@/lib/StoreContext";
 import { Layout } from "@/components/layout/Layout";
 
 import Home from "@/pages/Home";
@@ -19,7 +19,20 @@ import NotFound from "@/pages/not-found";
 
 const queryClient = new QueryClient();
 
+function LoadingScreen() {
+  return (
+    <div className="min-h-screen bg-background flex flex-col items-center justify-center gap-6">
+      <span className="font-serif text-3xl font-bold tracking-widest text-primary">KINDO</span>
+      <div className="w-7 h-7 border-[3px] border-primary border-t-transparent rounded-full animate-spin" />
+    </div>
+  );
+}
+
 function Router() {
+  const { loading } = useStore();
+
+  if (loading) return <LoadingScreen />;
+
   return (
     <Switch>
       <Route path="/admin" component={Admin} />
