@@ -254,37 +254,53 @@ async function handleGallery(request, env) {
 
 // Helper: Bulk sync gallery (used by PUT with array)
 async function bulkSyncGallery(articles, env) {
-  const statements = [];
-  
-  // Delete all existing articles
-  statements.push(env.DB.prepare('DELETE FROM gallery'));
-  
-  // Insert all articles from the array
-  for (const d of articles) {
-    const extraImages = Array.isArray(d.extra_images)
-      ? JSON.stringify(d.extra_images)
-      : (typeof d.extra_images === 'string' ? d.extra_images : null);
+  try {
+    if (!Array.isArray(articles)) {
+      return json({ error: 'Expected array of articles' }, 400);
+    }
     
-    statements.push(
-      env.DB.prepare(
-        `INSERT INTO gallery
-          (image_url, title, title_ar, title_en, excerpt, excerpt_ar, excerpt_en, body, body_ar, body_en, alt_text, category, display_order, extra_images, date)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
-      ).bind(
-        d.image_url || '', d.title || 'Untitled', d.title_ar || null, d.title_en || null,
-        d.excerpt || null, d.excerpt_ar || null, d.excerpt_en || null,
-        d.body || null, d.body_ar || null, d.body_en || null,
-        d.alt_text || d.title || 'Gallery Image',
-        d.category || null, d.display_order || 0, extraImages,
-        d.date || null
-      )
-    );
+    const statements = [];
+    
+    // Delete all existing articles
+    statements.push(env.DB.prepare('DELETE FROM gallery'));
+    
+    // Insert all articles from the array
+    for (const d of articles) {
+      if (!d.title && !d.image_url) {
+        console.error('Invalid article data:', d);
+        continue; // Skip invalid articles
+      }
+      
+      const extraImages = Array.isArray(d.extra_images)
+        ? JSON.stringify(d.extra_images)
+        : (typeof d.extra_images === 'string' ? d.extra_images : null);
+      
+      statements.push(
+        env.DB.prepare(
+          `INSERT INTO gallery
+            (image_url, title, title_ar, title_en, excerpt, excerpt_ar, excerpt_en, body, body_ar, body_en, alt_text, category, display_order, extra_images, date)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+        ).bind(
+          d.image_url || '', d.title || 'Untitled', d.title_ar || null, d.title_en || null,
+          d.excerpt || null, d.excerpt_ar || null, d.excerpt_en || null,
+          d.body || null, d.body_ar || null, d.body_en || null,
+          d.alt_text || d.title || 'Gallery Image',
+          d.category || null, d.display_order || 0, extraImages,
+          d.date || null
+        )
+      );
+    }
+    
+    // Execute all statements as a transaction
+    if (statements.length > 1) {
+      await env.DB.batch(statements);
+    }
+    
+    return json({ success: true, count: articles.length });
+  } catch (error) {
+    console.error('bulkSyncGallery error:', error);
+    return json({ error: error.message || 'Failed to sync articles' }, 500);
   }
-  
-  // Execute all statements as a transaction
-  await env.DB.batch(statements);
-  
-  return json({ success: true, count: articles.length });
 }
 
 // Helper: Update a single article
