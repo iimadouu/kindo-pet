@@ -1,0 +1,5 @@
+# SPA fallback — all routes resolve to index.html (Cloudflare Pages)
+/*    /index.html   200
+
+# www → non-www canonical redirect
+https://www.kindo.pages.dev/* https://kindo.pages.dev/:splat 301!

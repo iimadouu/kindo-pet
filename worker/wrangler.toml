@@ -1,0 +1,19 @@
+name = "kindo-upload-worker"
+main = "upload-worker.js"
+compatibility_date = "2024-01-01"
+
+# R2 Bucket binding
+[[r2_buckets]]
+binding = "BUCKET"
+bucket_name = "kindo-images"
+
+# D1 Database binding
+[[d1_databases]]
+binding = "DB"
+database_name = "kindo-db"
+database_id = "9667ecc0-c85f-4d96-af13-a697ace3a4b4"
+
+[vars]
+ENVIRONMENT = "production"
+# R2_PUBLIC_URL is set as a secret: wrangler secret put R2_PUBLIC_URL
+# Do NOT put credentials here — use: wrangler secret put <KEY>

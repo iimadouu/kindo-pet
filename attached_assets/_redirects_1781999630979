@@ -1,0 +1,2 @@
+# 301 redirect www to non-www for SEO
+https://www.kindo.pages.dev/* https://kindo.pages.dev/:splat 301!
