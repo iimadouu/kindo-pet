@@ -1,6 +1,7 @@
 import React from 'react';
 import { useLanguage } from '@/i18n/LanguageContext';
 import { useStore } from '@/lib/StoreContext';
+import { KindoSettings } from '@/lib/store';
 import { partners, partnerMarquee } from '@/data/partners';
 import { ProductCard } from '@/components/shared/ProductCard';
 import { Button } from '@/components/ui/button';
@@ -9,11 +10,87 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent } from '@/components/ui/card';
 import { motion } from 'framer-motion';
 
+function AdBanner({ settings, language }: { settings: KindoSettings; language: string }) {
+  const isAr = language === 'ar';
+  const title = isAr ? settings.adBannerTitleAR : settings.adBannerTitleFR;
+  const desc  = isAr ? settings.adBannerDescAR  : settings.adBannerDescFR;
+  const hasText = title || desc;
+  const hasImage = !!settings.adBannerImage;
+  const hasLink = !!settings.adBannerLinkUrl;
+
+  const inner = (
+    <motion.div
+      initial={{ opacity: 0, y: 24 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.6 }}
+      className={`relative w-full overflow-hidden ${hasImage ? 'min-h-[260px] md:min-h-[400px]' : 'py-12 md:py-20'} flex items-center justify-center`}
+    >
+      {hasImage && (
+        <>
+          <img
+            src={settings.adBannerImage}
+            alt={title || 'Publicité'}
+            className="absolute inset-0 w-full h-full object-cover object-center"
+          />
+          <div className="absolute inset-0 bg-black/50" />
+        </>
+      )}
+      {hasText && (
+        <div
+          className={`relative z-10 max-w-3xl mx-auto px-6 md:px-10 text-center ${
+            hasImage ? 'text-white' : 'text-foreground'
+          }`}
+          dir={isAr ? 'rtl' : 'ltr'}
+        >
+          {title && (
+            <h2 className={`font-serif font-bold leading-tight mb-4 ${
+              hasImage
+                ? 'text-3xl md:text-5xl drop-shadow-lg'
+                : 'text-3xl md:text-4xl'
+            }`}>
+              {title}
+            </h2>
+          )}
+          {desc && (
+            <p className={`text-base md:text-lg font-light max-w-xl mx-auto ${
+              hasImage ? 'text-white/90 drop-shadow' : 'text-muted-foreground'
+            }`}>
+              {desc}
+            </p>
+          )}
+          {hasLink && (
+            <div className="mt-8">
+              <span className={`inline-block px-8 py-3 rounded-full font-semibold text-sm transition-all duration-200 ${
+                hasImage
+                  ? 'bg-white text-primary hover:bg-white/90'
+                  : 'bg-primary text-primary-foreground hover:bg-primary/90'
+              }`}>
+                {isAr ? 'اكتشف المزيد' : 'Découvrir'}
+              </span>
+            </div>
+          )}
+        </div>
+      )}
+    </motion.div>
+  );
+
+  return (
+    <section className={`w-full ${!hasImage ? 'bg-muted/40 border-y border-border' : ''}`}>
+      {hasLink ? (
+        <a href={settings.adBannerLinkUrl} target="_blank" rel="noopener noreferrer" className="block group cursor-pointer">
+          {inner}
+        </a>
+      ) : inner}
+    </section>
+  );
+}
+
 const heroImage = 'https://images.unsplash.com/photo-1583512603805-3cc6b41f3edb?w=1920&q=80';
 
 export default function Home() {
   const { language, t } = useLanguage();
-  const { products, articles } = useStore();
+  const { products, articles, settings } = useStore();
 
   const categories = ['dogs', 'cats', 'birds', 'fish'] as const;
 
@@ -49,6 +126,11 @@ export default function Home() {
           ))}
         </div>
       </section>
+
+      {/* Ad Banner */}
+      {settings.adBannerEnabled && (settings.adBannerImage || settings.adBannerTitleFR || settings.adBannerTitleAR) && (
+        <AdBanner settings={settings} language={language} />
+      )}
 
       {/* Hot Items / Featured */}
       <section className="py-20 md:py-32">

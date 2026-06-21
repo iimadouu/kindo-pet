@@ -892,6 +892,112 @@ function SettingsTab({ settings, setSettings }: { settings: KindoSettings; setSe
         </CardContent>
       </Card>
 
+      {/* Ad Banner */}
+      <Card className="border-0 shadow-sm bg-white">
+        <CardHeader>
+          <CardTitle className="text-sm">Bannière publicitaire (après les partenaires)</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={() => setForm(f => ({ ...f, adBannerEnabled: !f.adBannerEnabled }))}
+              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${form.adBannerEnabled ? 'bg-emerald-600' : 'bg-slate-300'}`}
+            >
+              <span className={`inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform ${form.adBannerEnabled ? 'translate-x-6' : 'translate-x-1'}`} />
+            </button>
+            <Label className="cursor-pointer" onClick={() => setForm(f => ({ ...f, adBannerEnabled: !f.adBannerEnabled }))}>
+              {form.adBannerEnabled ? 'Bannière activée ✓' : 'Bannière désactivée'}
+            </Label>
+          </div>
+
+          {/* Image */}
+          <div className="space-y-1.5">
+            <Label>Image de la bannière</Label>
+            <div className="flex gap-2">
+              <Input
+                value={form.adBannerImage.startsWith('data:') ? '' : form.adBannerImage}
+                onChange={e => set('adBannerImage', e.target.value)}
+                placeholder="https://... ou téléverser ci-dessous"
+                className="flex-1"
+              />
+              <label className="cursor-pointer flex items-center gap-1.5 px-3 py-2 rounded-lg border border-dashed border-slate-300 hover:border-emerald-400 text-xs text-slate-500 hover:text-emerald-600 transition-colors whitespace-nowrap">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                Téléverser
+                <input type="file" accept="image/*" className="hidden" onChange={e => {
+                  const file = e.target.files?.[0];
+                  if (!file) return;
+                  const reader = new FileReader();
+                  reader.onload = ev => set('adBannerImage', ev.target?.result as string ?? '');
+                  reader.readAsDataURL(file);
+                }} />
+              </label>
+            </div>
+            {form.adBannerImage && (
+              <div className="mt-2 rounded-xl overflow-hidden border border-slate-200 max-h-40">
+                <img src={form.adBannerImage} alt="Aperçu bannière" className="w-full h-full object-cover" />
+              </div>
+            )}
+          </div>
+
+          {/* Titles */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="space-y-1.5">
+              <Label>Titre — Français</Label>
+              <Input value={form.adBannerTitleFR} onChange={e => set('adBannerTitleFR', e.target.value)} placeholder="Notre nouvelle collection" />
+            </div>
+            <div className="space-y-1.5">
+              <Label>العنوان — العربية</Label>
+              <Input value={form.adBannerTitleAR} onChange={e => set('adBannerTitleAR', e.target.value)} placeholder="مجموعتنا الجديدة" dir="rtl" className="text-right" />
+            </div>
+          </div>
+
+          {/* Descriptions */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="space-y-1.5">
+              <Label>Description — Français</Label>
+              <textarea
+                value={form.adBannerDescFR}
+                onChange={e => set('adBannerDescFR', e.target.value)}
+                placeholder="Découvrez notre sélection exclusive pour vos animaux…"
+                rows={3}
+                className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring resize-none"
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label>الوصف — العربية</Label>
+              <textarea
+                value={form.adBannerDescAR}
+                onChange={e => set('adBannerDescAR', e.target.value)}
+                placeholder="اكتشف تشكيلتنا الحصرية لحيواناتك الأليفة…"
+                rows={3}
+                dir="rtl"
+                className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring resize-none text-right"
+              />
+            </div>
+          </div>
+
+          {/* Link */}
+          <div className="space-y-1.5">
+            <Label>Lien (optionnel) — toute la bannière devient cliquable</Label>
+            <Input value={form.adBannerLinkUrl} onChange={e => set('adBannerLinkUrl', e.target.value)} placeholder="https://... ou /catalog" />
+          </div>
+
+          {/* Live preview */}
+          {(form.adBannerTitleFR || form.adBannerImage) && (
+            <div className="mt-2 rounded-xl overflow-hidden border border-slate-200 relative min-h-[120px] flex items-center justify-center"
+              style={form.adBannerImage ? { backgroundImage: `url(${form.adBannerImage})`, backgroundSize: 'cover', backgroundPosition: 'center' } : { background: '#f1f5f9' }}>
+              {form.adBannerImage && <div className="absolute inset-0 bg-black/50 rounded-xl" />}
+              <div className={`relative z-10 text-center px-6 py-4 ${form.adBannerImage ? 'text-white' : 'text-slate-700'}`}>
+                {form.adBannerTitleFR && <div className="font-serif font-bold text-lg">{form.adBannerTitleFR}</div>}
+                {form.adBannerDescFR && <div className="text-sm mt-1 opacity-90">{form.adBannerDescFR}</div>}
+              </div>
+              <div className="absolute top-2 right-2 text-xs bg-black/30 text-white px-2 py-0.5 rounded-full">Aperçu</div>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
       {/* Address */}
       <Card className="border-0 shadow-sm bg-white">
         <CardHeader><CardTitle className="text-sm">Adresse</CardTitle></CardHeader>

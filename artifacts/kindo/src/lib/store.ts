@@ -11,6 +11,13 @@ export interface KindoSettings {
   addressAR: string;
   phone: string;
   email: string;
+  adBannerEnabled: boolean;
+  adBannerImage: string;
+  adBannerTitleFR: string;
+  adBannerTitleAR: string;
+  adBannerDescFR: string;
+  adBannerDescAR: string;
+  adBannerLinkUrl: string;
 }
 
 export const DEFAULT_SETTINGS: KindoSettings = {
@@ -23,6 +30,13 @@ export const DEFAULT_SETTINGS: KindoSettings = {
   addressAR: 'الجزائر العاصمة، الجزائر',
   phone: '+213 555 000 000',
   email: 'contact@kindo.dz',
+  adBannerEnabled: false,
+  adBannerImage: '',
+  adBannerTitleFR: '',
+  adBannerTitleAR: '',
+  adBannerDescFR: '',
+  adBannerDescAR: '',
+  adBannerLinkUrl: '',
 };
 
 const KEYS = {
