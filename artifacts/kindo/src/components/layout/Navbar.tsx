@@ -11,7 +11,17 @@ export function Navbar() {
   const { theme, setTheme } = useTheme();
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [location] = useLocation();
+  const [location, setLocation] = useLocation();
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      setLocation(`/catalog?search=${encodeURIComponent(searchQuery.trim())}`);
+      setMobileMenuOpen(false);
+      setSearchQuery('');
+    }
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -55,13 +65,15 @@ export function Navbar() {
 
         {/* Actions */}
         <div className="flex items-center gap-2">
-          <div className="hidden sm:flex relative w-48 lg:w-64">
-            <Search className="absolute ltr:left-2 rtl:right-2 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+          <form onSubmit={handleSearch} className="hidden sm:flex relative w-48 lg:w-64">
+            <Search className="absolute ltr:left-2 rtl:right-2 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
             <Input 
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
               placeholder={t('common.search')} 
               className="h-9 ltr:pl-8 rtl:pr-8 bg-muted/50 border-transparent focus-visible:bg-background"
             />
-          </div>
+          </form>
 
           <Button 
             variant="ghost" 
@@ -91,13 +103,15 @@ export function Navbar() {
       {/* Mobile Menu */}
       {mobileMenuOpen && (
         <div className="md:hidden absolute top-16 left-0 w-full bg-background border-b border-border shadow-lg p-4 flex flex-col gap-4 animate-in slide-in-from-top-4">
-          <div className="relative w-full">
-            <Search className="absolute ltr:left-3 rtl:right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+          <form onSubmit={handleSearch} className="relative w-full">
+            <Search className="absolute ltr:left-3 rtl:right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
             <Input 
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
               placeholder={t('common.search')} 
               className="h-10 ltr:pl-9 rtl:pr-9 w-full"
             />
-          </div>
+          </form>
           <nav className="flex flex-col gap-2">
             {navLinks.map((link) => (
               <Link 

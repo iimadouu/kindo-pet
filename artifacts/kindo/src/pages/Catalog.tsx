@@ -18,8 +18,12 @@ export default function Catalog() {
   const { products } = useStore();
   const params = useParams();
   const initialCategory = (params as { category?: string }).category || 'all';
+  
+  // Get search query from URL
+  const urlParams = new URLSearchParams(window.location.search);
+  const urlSearch = urlParams.get('search') || '';
 
-  const [search, setSearch] = useState('');
+  const [search, setSearch] = useState(urlSearch);
   const [selectedCategories, setSelectedCategories] = useState<string[]>(
     initialCategory !== 'all' ? [initialCategory] : []
   );
