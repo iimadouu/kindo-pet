@@ -88,26 +88,34 @@ async function handleProducts(request, env) {
 
   // BULK PUT - Replace entire products table
   if (request.method === 'PUT') {
+    console.log('=== HANDLE PRODUCTS PUT REQUEST ===');
     try {
+      console.log('Step 1: Parsing request JSON...');
       const products = await request.json();
-      console.log('PUT /api/products - Received data:', JSON.stringify(products).substring(0, 500));
+      console.log('Step 2: JSON parsed successfully');
+      console.log(`Type: ${Array.isArray(products) ? 'array' : 'object'}`);
+      console.log(`Length/Keys: ${Array.isArray(products) ? products.length : Object.keys(products).length}`);
+      console.log('First 500 chars:', JSON.stringify(products).substring(0, 500));
       
       // If it's an array, do bulk sync
       if (Array.isArray(products)) {
-        console.log(`Processing array of ${products.length} products`);
+        console.log(`Step 3: Detected array of ${products.length} products - calling bulkSyncProducts`);
         return await bulkSyncProducts(products, env);
       }
       
       // If it's a single object with an id, update that product
       if (products.id) {
-        console.log('Processing single product update');
+        console.log('Step 3: Detected single product with id - calling updateSingleProduct');
         return await updateSingleProduct(products, env);
       }
       
-      console.error('Invalid PUT request - not array or single product');
+      console.error('ERROR: Invalid PUT request - not array or single product');
       return json({ error: 'Invalid PUT request. Expected array of products or single product with id.' }, 400);
     } catch (error) {
-      console.error('handleProducts PUT error:', error.message, error.stack);
+      console.error('=== HANDLE PRODUCTS PUT ERROR ===');
+      console.error('Error type:', error.name);
+      console.error('Error message:', error.message);
+      console.error('Error stack:', error.stack);
       return json({ error: `PUT failed: ${error.message}` }, 500);
     }
   }
@@ -141,52 +149,93 @@ async function handleProducts(request, env) {
 // Helper: Bulk sync products (used by PUT with array)
 async function bulkSyncProducts(products, env) {
   try {
-    // Strategy: Clear and re-insert all products
-    // This ensures the DB matches exactly what's in the frontend
+    console.log('=== BULK SYNC PRODUCTS START ===');
+    console.log(`Received ${products.length} products`);
+    console.log('First product sample:', JSON.stringify(products[0] || {}));
     
     if (!Array.isArray(products)) {
+      console.error('ERROR: products is not an array');
       return json({ error: 'Expected array of products' }, 400);
     }
     
     const statements = [];
     
     // Delete all existing products
+    console.log('Step 1: Adding DELETE statement');
     statements.push(env.DB.prepare('DELETE FROM products'));
     
     // Insert all products from the array
-    for (const d of products) {
+    console.log('Step 2: Processing products for INSERT');
+    for (let i = 0; i < products.length; i++) {
+      const d = products[i];
+      console.log(`\n--- Product ${i} ---`);
+      console.log(`Raw data:`, JSON.stringify(d));
+      
       if (!d.name || !d.category) {
-        console.error('Invalid product data:', d);
+        console.error(`ERROR: Invalid product at index ${i} - missing name or category`);
         continue; // Skip invalid products
       }
       
-      // Don't include 'id' in INSERT - let DB auto-generate it
-      statements.push(
-        env.DB.prepare(
-          `INSERT INTO products
-            (name, name_ar, name_en, category, type, price, description, description_ar, description_en, image_url, in_stock, featured, keywords, specs)
-           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
-        ).bind(
-          d.name, d.name_ar || null, d.name_en || null, d.category, d.type || 'food', 
-          parseFloat(d.price) || 0,
-          d.description || null, d.description_ar || null, d.description_en || null, d.image_url || null,
-          d.in_stock !== undefined ? (d.in_stock ? 1 : 0) : 1, 
-          d.featured ? 1 : 0, 
-          d.keywords || null,
-          d.specs ? (typeof d.specs === 'string' ? d.specs : JSON.stringify(d.specs)) : null
-        )
-      );
+      // Parse and validate each field
+      const name = d.name;
+      const name_ar = d.name_ar || null;
+      const name_en = d.name_en || null;
+      const category = d.category;
+      const type = d.type || 'food';
+      const price = parseFloat(d.price) || 0;
+      const description = d.description || null;
+      const description_ar = d.description_ar || null;
+      const description_en = d.description_en || null;
+      const image_url = d.image_url || null;
+      const in_stock = d.in_stock !== undefined ? (d.in_stock ? 1 : 0) : 1;
+      const featured = d.featured ? 1 : 0;
+      const keywords = d.keywords || null;
+      const specs = d.specs ? (typeof d.specs === 'string' ? d.specs : JSON.stringify(d.specs)) : null;
+      
+      console.log(`Parsed: name="${name}", category="${category}", price=${price}, in_stock=${in_stock}`);
+      
+      try {
+        statements.push(
+          env.DB.prepare(
+            `INSERT INTO products
+              (name, name_ar, name_en, category, type, price, description, description_ar, description_en, image_url, in_stock, featured, keywords, specs)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+          ).bind(name, name_ar, name_en, category, type, price, description, description_ar, description_en, image_url, in_stock, featured, keywords, specs)
+        );
+        console.log(`Product ${i} prepared successfully`);
+      } catch (prepareError) {
+        console.error(`ERROR preparing product ${i}:`, prepareError.message);
+        throw prepareError;
+      }
     }
+    
+    console.log(`\nStep 3: Total statements prepared: ${statements.length} (1 DELETE + ${statements.length - 1} INSERTs)`);
     
     // Execute all statements as a transaction
     if (statements.length > 1) {
-      await env.DB.batch(statements);
+      console.log('Step 4: Executing batch transaction...');
+      try {
+        const result = await env.DB.batch(statements);
+        console.log('SUCCESS: Batch completed');
+        console.log('Result:', JSON.stringify(result));
+        console.log('=== BULK SYNC PRODUCTS END (SUCCESS) ===');
+        return json({ success: true, count: products.length });
+      } catch (batchError) {
+        console.error('ERROR executing batch:', batchError.message);
+        console.error('Stack:', batchError.stack);
+        throw batchError;
+      }
+    } else {
+      console.log('Step 4: No products to insert (only DELETE)');
+      console.log('=== BULK SYNC PRODUCTS END (EMPTY) ===');
+      return json({ success: true, count: 0 });
     }
-    
-    return json({ success: true, count: products.length });
   } catch (error) {
-    console.error('bulkSyncProducts error:', error);
-    return json({ error: error.message || 'Failed to sync products' }, 500);
+    console.error('=== BULK SYNC PRODUCTS ERROR ===');
+    console.error('Error message:', error.message);
+    console.error('Error stack:', error.stack);
+    console.error('Error name:', error.name);
+    return json({ error: `Bulk sync failed: ${error.message}` }, 500);
   }
 }
 

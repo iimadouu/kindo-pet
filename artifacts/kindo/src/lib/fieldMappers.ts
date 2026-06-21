@@ -43,10 +43,11 @@ export function productFromDb(dbProduct: any): Product {
  * Convert Product from frontend format to database format for API submission
  * Frontend: { nameFR, nameAR, descriptionFR, descriptionAR, images[], ... }
  * Database: { name, name_ar, description, description_ar, image_url, in_stock, ... }
+ * 
+ * NOTE: Does NOT include 'id' field for bulk inserts (DB auto-generates it)
  */
 export function productToDb(product: Product): any {
-  return {
-    id: product.id,
+  const dbProduct: any = {
     name: product.nameFR,
     name_ar: product.nameAR,
     name_en: product.nameFR, // Use FR as fallback for EN
@@ -62,6 +63,14 @@ export function productToDb(product: Product): any {
     keywords: product.keywords || '',
     specs: JSON.stringify(product.specs || {})
   };
+  
+  // Only include ID if it's a real database ID (not a temp ID like "tmp-123")
+  // For bulk inserts, we let the database auto-generate IDs
+  if (product.id && !product.id.startsWith('tmp-')) {
+    dbProduct.id = product.id;
+  }
+  
+  return dbProduct;
 }
 
 // ============================================================================
@@ -91,10 +100,11 @@ export function articleFromDb(dbArticle: any): Article {
  * Convert Article from frontend format to database format for API submission
  * Frontend: { titleFR, titleAR, excerptFR, excerptAR, bodyFR, bodyAR, image, ... }
  * Database: { title, title_ar, excerpt, excerpt_ar, body, body_ar, image_url, ... }
+ * 
+ * NOTE: Does NOT include 'id' field for bulk inserts (DB auto-generates it)
  */
 export function articleToDb(article: Article): any {
-  return {
-    id: article.id,
+  const dbArticle: any = {
     title: article.titleFR,
     title_ar: article.titleAR,
     title_en: article.titleFR, // Use FR as fallback for EN
@@ -111,6 +121,13 @@ export function articleToDb(article: Article): any {
     extra_images: '',
     date: article.date
   };
+  
+  // Only include ID if it's a real database ID (not a temp ID like "tmp-123")
+  if (article.id && !article.id.startsWith('tmp-')) {
+    dbArticle.id = article.id;
+  }
+  
+  return dbArticle;
 }
 
 /**
