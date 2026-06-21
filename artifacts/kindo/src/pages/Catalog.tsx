@@ -45,7 +45,15 @@ export default function Catalog() {
 
   const filteredProducts = useMemo(() => {
     return products.filter(p => {
-      const matchSearch = (p.nameFR + p.nameAR).toLowerCase().includes(search.toLowerCase());
+      // Search in French name, Arabic name, description, and keywords
+      const searchText = search.toLowerCase();
+      const matchSearch = search === '' || 
+        p.nameFR.toLowerCase().includes(searchText) ||
+        p.nameAR.toLowerCase().includes(searchText) ||
+        (p.descriptionFR || '').toLowerCase().includes(searchText) ||
+        (p.descriptionAR || '').toLowerCase().includes(searchText) ||
+        (p.keywords || '').toLowerCase().includes(searchText);
+      
       const matchCategory = selectedCategories.length === 0 || selectedCategories.includes(p.category);
       const matchType = selectedTypes.length === 0 || selectedTypes.includes(p.type);
       return matchSearch && matchCategory && matchType;

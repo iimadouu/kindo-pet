@@ -11,6 +11,7 @@ export const translations = {
       birds: "Oiseaux",
       fish: "Poissons",
       food: "Nourriture",
+      accessory: "Accessoire",
       accessories: "Accessoires",
     },
     common: {
@@ -76,6 +77,7 @@ export const translations = {
       birds: "طيور",
       fish: "أسماك",
       food: "طعام",
+      accessory: "إكسسوار",
       accessories: "إكسسوارات",
     },
     common: {
