@@ -27,7 +27,7 @@ export const translations = {
     },
     home: {
       heroTitle: "L'excellence pour vos compagnons",
-      heroSubtitle: "Découvrez notre sélection premium d'alimentation et d'accessoires pour animaux de compagnie en Algérie.",
+      heroSubtitle: "Aliments & accessoires premium pour animaux • Algérie",
       heroCta: "Explorer le catalogue",
       trustMarquee: ["Qualité Certifiée", "Partenaire Officiel", "Livraison Rapide", "Service Premium"],
       hotItems: "Articles Populaires",
@@ -93,7 +93,7 @@ export const translations = {
     },
     home: {
       heroTitle: "الامتياز لحيواناتك الأليفة",
-      heroSubtitle: "اكتشف مجموعتنا الممتازة من الأطعمة والإكسسوارات للحيوانات الأليفة في الجزائر.",
+      heroSubtitle: "غذاء ومستلزمات فاخرة لحيواناتكم الأليفة في الجزائر.",
       heroCta: "تصفح الكتالوج",
       trustMarquee: ["جودة معتمدة", "شريك رسمي", "توصيل سريع", "خدمة ممتازة"],
       hotItems: "منتجات رائجة",
