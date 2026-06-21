@@ -1,6 +1,10 @@
 import { Product } from '@/data/catalog';
 import { Article } from '@/data/gallery';
 import { KindoSettings } from '@/lib/store';
+import { 
+  productFromDb, productToDb, productsFromDb, productsToDb,
+  articleFromDb, articleToDb, articlesFromDb, articlesToDb
+} from '@/lib/fieldMappers';
 
 const RAW = (import.meta.env.VITE_WORKER_URL as string | undefined) ?? '';
 const WORKER = RAW.replace(/\/$/, '');
@@ -18,8 +22,16 @@ async function apiFetch<T>(path: string, init?: RequestInit): Promise<T | null> 
 }
 
 /* ── Reads ── */
-export const apiGetProducts = () => apiFetch<Product[]>('/api/products');
-export const apiGetArticles = () => apiFetch<Article[]>('/api/articles');
+export const apiGetProducts = async () => {
+  const dbProducts = await apiFetch<any[]>('/api/products');
+  return dbProducts ? productsFromDb(dbProducts) : null;
+};
+
+export const apiGetArticles = async () => {
+  const dbArticles = await apiFetch<any[]>('/api/articles');
+  return dbArticles ? articlesFromDb(dbArticles) : null;
+};
+
 export const apiGetSettings = () => apiFetch<KindoSettings>('/api/settings');
 
 /* ── Writes ── */
@@ -30,8 +42,8 @@ const put = (path: string, body: unknown) =>
     body: JSON.stringify(body),
   });
 
-export const apiSaveProducts = (p: Product[]) => put('/api/products', p);
-export const apiSaveArticles = (a: Article[]) => put('/api/articles', a);
+export const apiSaveProducts = (p: Product[]) => put('/api/products', productsToDb(p));
+export const apiSaveArticles = (a: Article[]) => put('/api/articles', articlesToDb(a));
 export const apiSaveSettings = (s: KindoSettings) => put('/api/settings', s);
 
 /* ── Image upload → R2 ──

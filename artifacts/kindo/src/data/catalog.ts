@@ -7,9 +7,11 @@ export interface Product {
   category: 'dogs' | 'cats' | 'birds' | 'fish';
   type: 'food' | 'accessory';
   price: number;
-  images: string[];
+  images: string[];  // First image is the main one
   specs: Record<string, string>;
   featured: boolean;
+  keywords?: string;  // Optional keywords for search
+  inStock?: boolean;  // Optional stock status
 }
 
 export const catalog: Product[] = [
@@ -25,7 +27,9 @@ export const catalog: Product[] = [
     price: 12500,
     images: ["https://picsum.photos/seed/d1/600/600", "https://picsum.photos/seed/d1-2/600/600"],
     specs: { "Poids / الوزن": "15 kg", "Protéines / بروتين": "26%" },
-    featured: true
+    featured: true,
+    keywords: "royal canin, dog food, large breed",
+    inStock: true
   },
   {
     id: "d2",
@@ -38,7 +42,9 @@ export const catalog: Product[] = [
     price: 4500,
     images: ["https://picsum.photos/seed/d2/600/600"],
     specs: { "Matière / المادة": "Cuir véritable / جلد طبيعي", "Longueur / الطول": "1.2m" },
-    featured: false
+    featured: false,
+    keywords: "leash, leather, dog accessory",
+    inStock: true
   },
   {
     id: "d3",
@@ -51,7 +57,9 @@ export const catalog: Product[] = [
     price: 9800,
     images: ["https://picsum.photos/seed/d3/600/600"],
     specs: { "Poids / الوزن": "14 kg" },
-    featured: true
+    featured: true,
+    keywords: "pro plan, sensitive, dog food",
+    inStock: true
   },
   {
     id: "d4",
@@ -64,9 +72,10 @@ export const catalog: Product[] = [
     price: 15000,
     images: ["https://picsum.photos/seed/d4/600/600"],
     specs: { "Dimensions / الأبعاد": "100x70 cm" },
-    featured: true
+    featured: true,
+    keywords: "bed, orthopedic, dog accessory",
+    inStock: true
   },
-  // Add more mock items up to 10 for each category
   // Cats
   {
     id: "c1",
@@ -79,7 +88,9 @@ export const catalog: Product[] = [
     price: 24000,
     images: ["https://picsum.photos/seed/c1/600/600"],
     specs: { "Hauteur / الارتفاع": "140 cm" },
-    featured: true
+    featured: true,
+    keywords: "cat tree, design, accessory",
+    inStock: true
   },
   {
     id: "c2",
@@ -92,7 +103,9 @@ export const catalog: Product[] = [
     price: 8900,
     images: ["https://picsum.photos/seed/c2/600/600"],
     specs: { "Poids / الوزن": "5.4 kg", "Viande / اللحوم": "85%" },
-    featured: true
+    featured: true,
+    keywords: "orijen, cat food, sterilised",
+    inStock: true
   },
   // Birds
   {
@@ -106,7 +119,9 @@ export const catalog: Product[] = [
     price: 18500,
     images: ["https://picsum.photos/seed/b1/600/600"],
     specs: { "Dimensions / الأبعاد": "160x80x50 cm" },
-    featured: true
+    featured: true,
+    keywords: "cage, aviary, bird accessory",
+    inStock: true
   },
   {
     id: "b2",
@@ -119,7 +134,9 @@ export const catalog: Product[] = [
     price: 3200,
     images: ["https://picsum.photos/seed/b2/600/600"],
     specs: { "Poids / الوزن": "2.5 kg" },
-    featured: false
+    featured: false,
+    keywords: "seeds, parrot, bird food",
+    inStock: true
   },
   // Fish
   {
@@ -133,7 +150,9 @@ export const catalog: Product[] = [
     price: 28000,
     images: ["https://picsum.photos/seed/f1/600/600"],
     specs: { "Volume / الحجم": "30 L" },
-    featured: true
+    featured: true,
+    keywords: "aquarium, nano, fish accessory",
+    inStock: true
   },
   {
     id: "f2",
@@ -146,7 +165,9 @@ export const catalog: Product[] = [
     price: 1500,
     images: ["https://picsum.photos/seed/f2/600/600"],
     specs: { "Poids / الوزن": "500 ml" },
-    featured: false
+    featured: false,
+    keywords: "tetra, flakes, fish food",
+    inStock: true
   }
 ];
 
@@ -164,7 +185,9 @@ for (let i = 3; i <= 10; i++) {
     price: 2000 + i * 500,
     images: [`https://picsum.photos/seed/d${i+2}/600/600`],
     specs: { "Info": "Detail" },
-    featured: i === 3
+    featured: i === 3,
+    keywords: "dog, product",
+    inStock: true
   });
   additionalItems.push({
     id: `c${i+2}`,
@@ -177,7 +200,9 @@ for (let i = 3; i <= 10; i++) {
     price: 1500 + i * 400,
     images: [`https://picsum.photos/seed/c${i+2}/600/600`],
     specs: { "Info": "Detail" },
-    featured: i === 4
+    featured: i === 4,
+    keywords: "cat, product",
+    inStock: true
   });
   additionalItems.push({
     id: `b${i+2}`,
@@ -190,7 +215,9 @@ for (let i = 3; i <= 10; i++) {
     price: 1000 + i * 300,
     images: [`https://picsum.photos/seed/b${i+2}/600/600`],
     specs: { "Info": "Detail" },
-    featured: false
+    featured: false,
+    keywords: "bird, product",
+    inStock: true
   });
   additionalItems.push({
     id: `f${i+2}`,
@@ -203,7 +230,9 @@ for (let i = 3; i <= 10; i++) {
     price: 800 + i * 200,
     images: [`https://picsum.photos/seed/f${i+2}/600/600`],
     specs: { "Info": "Detail" },
-    featured: false
+    featured: false,
+    keywords: "fish, product",
+    inStock: true
   });
 }
 

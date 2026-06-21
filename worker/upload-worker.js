@@ -81,6 +81,24 @@ async function handleProducts(request, env) {
     return json(results);
   }
 
+  // BULK PUT - Replace entire products table
+  if (request.method === 'PUT') {
+    const products = await request.json();
+    
+    // If it's an array, do bulk sync
+    if (Array.isArray(products)) {
+      return await bulkSyncProducts(products, env);
+    }
+    
+    // If it's a single object with an id, update that product
+    if (products.id) {
+      return await updateSingleProduct(products, env);
+    }
+    
+    return json({ error: 'Invalid PUT request. Expected array of products or single product with id.' }, 400);
+  }
+
+  // POST - Create a new product
   if (request.method === 'POST') {
     const d = await request.json();
     const result = await env.DB.prepare(
@@ -89,28 +107,14 @@ async function handleProducts(request, env) {
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
     ).bind(
       d.name, d.name_ar || null, d.name_en || null, d.category, d.type || 'food', d.price,
-      d.description || null, d.description_ar || null, d.description_en || null, d.image_url,
-      d.in_stock ? 1 : 0, d.featured ? 1 : 0, d.keywords || null,
-      d.specs ? JSON.stringify(d.specs) : null
+      d.description || null, d.description_ar || null, d.description_en || null, d.image_url || null,
+      d.in_stock !== undefined ? d.in_stock : 1, d.featured ? 1 : 0, d.keywords || null,
+      d.specs ? (typeof d.specs === 'string' ? d.specs : JSON.stringify(d.specs)) : null
     ).run();
     return json({ success: true, id: result.meta?.last_row_id });
   }
 
-  if (request.method === 'PUT') {
-    const d = await request.json();
-    await env.DB.prepare(
-      `UPDATE products SET name=?, name_ar=?, name_en=?, category=?, type=?, price=?, description=?,
-       description_ar=?, description_en=?, image_url=?, in_stock=?, featured=?, keywords=?, specs=?,
-       updated_at=CURRENT_TIMESTAMP WHERE id=?`
-    ).bind(
-      d.name, d.name_ar || null, d.name_en || null, d.category, d.type || 'food', d.price,
-      d.description || null, d.description_ar || null, d.description_en || null, d.image_url,
-      d.in_stock ? 1 : 0, d.featured ? 1 : 0, d.keywords || null,
-      d.specs ? JSON.stringify(d.specs) : null, d.id
-    ).run();
-    return json({ success: true });
-  }
-
+  // DELETE - Delete a product
   if (request.method === 'DELETE') {
     const { id } = await request.json();
     await env.DB.prepare('DELETE FROM products WHERE id=?').bind(id).run();
@@ -118,6 +122,53 @@ async function handleProducts(request, env) {
   }
 
   return json({ error: 'Method not allowed' }, 405);
+}
+
+// Helper: Bulk sync products (used by PUT with array)
+async function bulkSyncProducts(products, env) {
+  // Strategy: Clear and re-insert all products
+  // This ensures the DB matches exactly what's in the frontend
+  
+  const statements = [];
+  
+  // Delete all existing products
+  statements.push(env.DB.prepare('DELETE FROM products'));
+  
+  // Insert all products from the array
+  for (const d of products) {
+    statements.push(
+      env.DB.prepare(
+        `INSERT INTO products
+          (name, name_ar, name_en, category, type, price, description, description_ar, description_en, image_url, in_stock, featured, keywords, specs)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+      ).bind(
+        d.name, d.name_ar || null, d.name_en || null, d.category, d.type || 'food', d.price,
+        d.description || null, d.description_ar || null, d.description_en || null, d.image_url || null,
+        d.in_stock !== undefined ? d.in_stock : 1, d.featured ? 1 : 0, d.keywords || null,
+        d.specs ? (typeof d.specs === 'string' ? d.specs : JSON.stringify(d.specs)) : null
+      )
+    );
+  }
+  
+  // Execute all statements as a transaction
+  await env.DB.batch(statements);
+  
+  return json({ success: true, count: products.length });
+}
+
+// Helper: Update a single product
+async function updateSingleProduct(d, env) {
+  await env.DB.prepare(
+    `UPDATE products SET name=?, name_ar=?, name_en=?, category=?, type=?, price=?, description=?,
+     description_ar=?, description_en=?, image_url=?, in_stock=?, featured=?, keywords=?, specs=?,
+     updated_at=CURRENT_TIMESTAMP WHERE id=?`
+  ).bind(
+    d.name, d.name_ar || null, d.name_en || null, d.category, d.type || 'food', d.price,
+    d.description || null, d.description_ar || null, d.description_en || null, d.image_url || null,
+    d.in_stock !== undefined ? d.in_stock : 1, d.featured ? 1 : 0, d.keywords || null,
+    d.specs ? (typeof d.specs === 'string' ? d.specs : JSON.stringify(d.specs)) : null, d.id
+  ).run();
+  return json({ success: true });
 }
 
 /* ── Gallery ── */
@@ -131,6 +182,24 @@ async function handleGallery(request, env) {
     return json(results);
   }
 
+  // BULK PUT - Replace entire gallery table
+  if (request.method === 'PUT') {
+    const articles = await request.json();
+    
+    // If it's an array, do bulk sync
+    if (Array.isArray(articles)) {
+      return await bulkSyncGallery(articles, env);
+    }
+    
+    // If it's a single object with an id, update that article
+    if (articles.id) {
+      return await updateSingleArticle(articles, env);
+    }
+    
+    return json({ error: 'Invalid PUT request. Expected array of articles or single article with id.' }, 400);
+  }
+
+  // POST - Create a new article
   if (request.method === 'POST') {
     const d = await request.json();
     const extraImages = Array.isArray(d.extra_images)
@@ -142,7 +211,7 @@ async function handleGallery(request, env) {
         (image_url, title, title_ar, title_en, excerpt, excerpt_ar, excerpt_en, body, body_ar, body_en, alt_text, category, display_order, extra_images, date)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
     ).bind(
-      d.image_url, d.title || 'Untitled', d.title_ar || null, d.title_en || null,
+      d.image_url || '', d.title || 'Untitled', d.title_ar || null, d.title_en || null,
       d.excerpt || null, d.excerpt_ar || null, d.excerpt_en || null,
       d.body || null, d.body_ar || null, d.body_en || null,
       d.alt_text || d.title || 'Gallery Image',
@@ -152,26 +221,7 @@ async function handleGallery(request, env) {
     return json({ success: true, last_row_id: result.meta?.last_row_id });
   }
 
-  if (request.method === 'PUT') {
-    const d = await request.json();
-    const extraImages = Array.isArray(d.extra_images)
-      ? JSON.stringify(d.extra_images)
-      : (typeof d.extra_images === 'string' ? d.extra_images : null);
-
-    await env.DB.prepare(
-      `UPDATE gallery SET image_url=?, title=?, title_ar=?, title_en=?, excerpt=?, excerpt_ar=?, excerpt_en=?,
-       body=?, body_ar=?, body_en=?, alt_text=?, category=?, display_order=?, extra_images=?, date=?,
-       updated_at=CURRENT_TIMESTAMP WHERE id=?`
-    ).bind(
-      d.image_url, d.title || 'Untitled', d.title_ar || null, d.title_en || null,
-      d.excerpt || null, d.excerpt_ar || null, d.excerpt_en || null,
-      d.body || null, d.body_ar || null, d.body_en || null,
-      d.alt_text || d.title || 'Gallery Image',
-      d.category || null, d.display_order || 0, extraImages, d.date || null, d.id
-    ).run();
-    return json({ success: true });
-  }
-
+  // DELETE - Delete an article
   if (request.method === 'DELETE') {
     const { id } = await request.json();
     await env.DB.prepare('DELETE FROM gallery WHERE id=?').bind(id).run();
@@ -179,6 +229,61 @@ async function handleGallery(request, env) {
   }
 
   return json({ error: 'Method not allowed' }, 405);
+}
+
+// Helper: Bulk sync gallery (used by PUT with array)
+async function bulkSyncGallery(articles, env) {
+  const statements = [];
+  
+  // Delete all existing articles
+  statements.push(env.DB.prepare('DELETE FROM gallery'));
+  
+  // Insert all articles from the array
+  for (const d of articles) {
+    const extraImages = Array.isArray(d.extra_images)
+      ? JSON.stringify(d.extra_images)
+      : (typeof d.extra_images === 'string' ? d.extra_images : null);
+    
+    statements.push(
+      env.DB.prepare(
+        `INSERT INTO gallery
+          (image_url, title, title_ar, title_en, excerpt, excerpt_ar, excerpt_en, body, body_ar, body_en, alt_text, category, display_order, extra_images, date)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+      ).bind(
+        d.image_url || '', d.title || 'Untitled', d.title_ar || null, d.title_en || null,
+        d.excerpt || null, d.excerpt_ar || null, d.excerpt_en || null,
+        d.body || null, d.body_ar || null, d.body_en || null,
+        d.alt_text || d.title || 'Gallery Image',
+        d.category || null, d.display_order || 0, extraImages,
+        d.date || null
+      )
+    );
+  }
+  
+  // Execute all statements as a transaction
+  await env.DB.batch(statements);
+  
+  return json({ success: true, count: articles.length });
+}
+
+// Helper: Update a single article
+async function updateSingleArticle(d, env) {
+  const extraImages = Array.isArray(d.extra_images)
+    ? JSON.stringify(d.extra_images)
+    : (typeof d.extra_images === 'string' ? d.extra_images : null);
+
+  await env.DB.prepare(
+    `UPDATE gallery SET image_url=?, title=?, title_ar=?, title_en=?, excerpt=?, excerpt_ar=?, excerpt_en=?,
+     body=?, body_ar=?, body_en=?, alt_text=?, category=?, display_order=?, extra_images=?, date=?,
+     updated_at=CURRENT_TIMESTAMP WHERE id=?`
+  ).bind(
+    d.image_url || '', d.title || 'Untitled', d.title_ar || null, d.title_en || null,
+    d.excerpt || null, d.excerpt_ar || null, d.excerpt_en || null,
+    d.body || null, d.body_ar || null, d.body_en || null,
+    d.alt_text || d.title || 'Gallery Image',
+    d.category || null, d.display_order || 0, extraImages, d.date || null, d.id
+  ).run();
+  return json({ success: true });
 }
 
 /* ── Articles (mapped to gallery for compatibility) ── */
