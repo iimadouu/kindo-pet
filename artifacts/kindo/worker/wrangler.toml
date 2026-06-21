@@ -1,0 +1,31 @@
+name = "kindo-worker"
+main = "index.js"
+compatibility_date = "2024-09-23"
+compatibility_flags = ["nodejs_compat"]
+
+# ── D1 Database (products / articles / settings) ──────────────────────────────
+# 1. Create:  wrangler d1 create kindo-db
+# 2. Copy the database_id printed above and paste it below
+# 3. Init schema:
+#      wrangler d1 execute kindo-db --file=schema.sql              (production)
+#      wrangler d1 execute kindo-db --local --file=schema.sql      (local test)
+
+[[d1_databases]]
+binding      = "DB"
+database_name = "kindo-db"
+database_id  = "REPLACE_WITH_YOUR_D1_DATABASE_ID"
+
+# ── R2 Bucket (images) ────────────────────────────────────────────────────────
+# 1. Create:  wrangler r2 bucket create kindo-images
+# 2. No further config needed — images are served through the Worker at /api/images/*
+
+[[r2_buckets]]
+binding     = "R2"
+bucket_name = "kindo-images"
+
+# ── Deploy ────────────────────────────────────────────────────────────────────
+# From this worker/ directory:
+#   wrangler deploy
+#
+# The Worker URL will be printed — copy it and set as VITE_WORKER_URL
+# in Cloudflare Pages → Settings → Environment variables.

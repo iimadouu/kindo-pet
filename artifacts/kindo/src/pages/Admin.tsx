@@ -3,6 +3,7 @@ import { useStore } from '@/lib/StoreContext';
 import { Product } from '@/data/catalog';
 import { Article } from '@/data/gallery';
 import { KindoSettings } from '@/lib/store';
+import { apiUploadImage } from '@/lib/api';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -401,19 +402,16 @@ function ProductFormDialog({ product, onSave, onClose }: { product: Product | nu
   const updateImage = (idx: number, val: string) => setImages(i => i.map((img, j) => j === idx ? val : img));
 
   const uploadFile = async (file: File, idx: number) => {
-    const workerUrl = import.meta.env.VITE_WORKER_URL as string | undefined;
-    if (!workerUrl) {
-      const reader = new FileReader();
-      reader.onload = ev => { if (ev.target?.result) updateImage(idx, ev.target.result as string); };
-      reader.readAsDataURL(file);
-      return;
-    }
     setUploading(true);
     try {
-      const fd = new FormData(); fd.append('file', file);
-      const res = await fetch(`${workerUrl}/upload`, { method: 'POST', body: fd });
-      const json = await res.json() as { url: string };
-      updateImage(idx, json.url);
+      const url = await apiUploadImage(file);
+      if (url) {
+        updateImage(idx, url);
+      } else {
+        const reader = new FileReader();
+        reader.onload = ev => { if (ev.target?.result) updateImage(idx, ev.target.result as string); };
+        reader.readAsDataURL(file);
+      }
     } catch { alert('Upload échoué. Entrez une URL manuellement.'); }
     finally { setUploading(false); }
   };
@@ -685,19 +683,16 @@ function ArticleFormDialog({ article, onSave, onClose }: { article: Article | nu
     setForm(f => ({ ...f, [field]: value }));
 
   const uploadImage = async (file: File) => {
-    const workerUrl = import.meta.env.VITE_WORKER_URL as string | undefined;
-    if (!workerUrl) {
-      const reader = new FileReader();
-      reader.onload = ev => { if (ev.target?.result) set('image', ev.target.result as string); };
-      reader.readAsDataURL(file);
-      return;
-    }
     setUploading(true);
     try {
-      const fd = new FormData(); fd.append('file', file);
-      const res = await fetch(`${workerUrl}/upload`, { method: 'POST', body: fd });
-      const json = await res.json() as { url: string };
-      set('image', json.url);
+      const url = await apiUploadImage(file);
+      if (url) {
+        set('image', url);
+      } else {
+        const reader = new FileReader();
+        reader.onload = ev => { if (ev.target?.result) set('image', ev.target.result as string); };
+        reader.readAsDataURL(file);
+      }
     } catch { alert("Upload échoué. Entrez une URL manuellement."); }
     finally { setUploading(false); }
   };
@@ -924,12 +919,17 @@ function SettingsTab({ settings, setSettings }: { settings: KindoSettings; setSe
               <label className="cursor-pointer flex items-center gap-1.5 px-3 py-2 rounded-lg border border-dashed border-slate-300 hover:border-emerald-400 text-xs text-slate-500 hover:text-emerald-600 transition-colors whitespace-nowrap">
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
                 Téléverser
-                <input type="file" accept="image/*" className="hidden" onChange={e => {
+                <input type="file" accept="image/*" className="hidden" onChange={async e => {
                   const file = e.target.files?.[0];
                   if (!file) return;
-                  const reader = new FileReader();
-                  reader.onload = ev => set('adBannerImage', ev.target?.result as string ?? '');
-                  reader.readAsDataURL(file);
+                  const url = await apiUploadImage(file);
+                  if (url) {
+                    set('adBannerImage', url);
+                  } else {
+                    const reader = new FileReader();
+                    reader.onload = ev => set('adBannerImage', ev.target?.result as string ?? '');
+                    reader.readAsDataURL(file);
+                  }
                 }} />
               </label>
             </div>
