@@ -131,34 +131,50 @@ async function handleProducts(request, env) {
 
 // Helper: Bulk sync products (used by PUT with array)
 async function bulkSyncProducts(products, env) {
-  // Strategy: Clear and re-insert all products
-  // This ensures the DB matches exactly what's in the frontend
-  
-  const statements = [];
-  
-  // Delete all existing products
-  statements.push(env.DB.prepare('DELETE FROM products'));
-  
-  // Insert all products from the array
-  for (const d of products) {
-    statements.push(
-      env.DB.prepare(
-        `INSERT INTO products
-          (name, name_ar, name_en, category, type, price, description, description_ar, description_en, image_url, in_stock, featured, keywords, specs)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
-      ).bind(
-        d.name, d.name_ar || null, d.name_en || null, d.category, d.type || 'food', d.price,
-        d.description || null, d.description_ar || null, d.description_en || null, d.image_url || null,
-        d.in_stock !== undefined ? d.in_stock : 1, d.featured ? 1 : 0, d.keywords || null,
-        d.specs ? (typeof d.specs === 'string' ? d.specs : JSON.stringify(d.specs)) : null
-      )
-    );
+  try {
+    // Strategy: Clear and re-insert all products
+    // This ensures the DB matches exactly what's in the frontend
+    
+    if (!Array.isArray(products)) {
+      return json({ error: 'Expected array of products' }, 400);
+    }
+    
+    const statements = [];
+    
+    // Delete all existing products
+    statements.push(env.DB.prepare('DELETE FROM products'));
+    
+    // Insert all products from the array
+    for (const d of products) {
+      if (!d.name || !d.category) {
+        console.error('Invalid product data:', d);
+        continue; // Skip invalid products
+      }
+      
+      statements.push(
+        env.DB.prepare(
+          `INSERT INTO products
+            (name, name_ar, name_en, category, type, price, description, description_ar, description_en, image_url, in_stock, featured, keywords, specs)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+        ).bind(
+          d.name, d.name_ar || null, d.name_en || null, d.category, d.type || 'food', d.price || 0,
+          d.description || null, d.description_ar || null, d.description_en || null, d.image_url || null,
+          d.in_stock !== undefined ? d.in_stock : 1, d.featured ? 1 : 0, d.keywords || null,
+          d.specs ? (typeof d.specs === 'string' ? d.specs : JSON.stringify(d.specs)) : null
+        )
+      );
+    }
+    
+    // Execute all statements as a transaction
+    if (statements.length > 1) {
+      await env.DB.batch(statements);
+    }
+    
+    return json({ success: true, count: products.length });
+  } catch (error) {
+    console.error('bulkSyncProducts error:', error);
+    return json({ error: error.message || 'Failed to sync products' }, 500);
   }
-  
-  // Execute all statements as a transaction
-  await env.DB.batch(statements);
-  
-  return json({ success: true, count: products.length });
 }
 
 // Helper: Update a single product
