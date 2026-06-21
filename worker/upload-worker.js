@@ -88,19 +88,28 @@ async function handleProducts(request, env) {
 
   // BULK PUT - Replace entire products table
   if (request.method === 'PUT') {
-    const products = await request.json();
-    
-    // If it's an array, do bulk sync
-    if (Array.isArray(products)) {
-      return await bulkSyncProducts(products, env);
+    try {
+      const products = await request.json();
+      console.log('PUT /api/products - Received data:', JSON.stringify(products).substring(0, 500));
+      
+      // If it's an array, do bulk sync
+      if (Array.isArray(products)) {
+        console.log(`Processing array of ${products.length} products`);
+        return await bulkSyncProducts(products, env);
+      }
+      
+      // If it's a single object with an id, update that product
+      if (products.id) {
+        console.log('Processing single product update');
+        return await updateSingleProduct(products, env);
+      }
+      
+      console.error('Invalid PUT request - not array or single product');
+      return json({ error: 'Invalid PUT request. Expected array of products or single product with id.' }, 400);
+    } catch (error) {
+      console.error('handleProducts PUT error:', error.message, error.stack);
+      return json({ error: `PUT failed: ${error.message}` }, 500);
     }
-    
-    // If it's a single object with an id, update that product
-    if (products.id) {
-      return await updateSingleProduct(products, env);
-    }
-    
-    return json({ error: 'Invalid PUT request. Expected array of products or single product with id.' }, 400);
   }
 
   // POST - Create a new product
