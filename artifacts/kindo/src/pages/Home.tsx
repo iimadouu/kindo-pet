@@ -97,7 +97,7 @@ export default function Home() {
   return (
     <div className="w-full">
       {/* Hero */}
-      <section className="relative h-[80vh] min-h-[600px] w-full flex items-center justify-center overflow-hidden">
+      <section className="relative h-[50vh] md:h-[80vh] min-h-[400px] md:min-h-[600px] w-full flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 z-0">
           <img src={heroImage} alt="Kindo Hero" className="w-full h-full object-cover object-center" />
           <div className="absolute inset-0 bg-black/40" />
