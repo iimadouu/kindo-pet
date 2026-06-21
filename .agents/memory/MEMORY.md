@@ -1,0 +1,1 @@
+- [Kindo store architecture](kindo-store.md) — localStorage store bridges admin edits to frontend without a backend; StoreProvider wraps entire app.

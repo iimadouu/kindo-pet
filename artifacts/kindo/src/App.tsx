@@ -4,6 +4,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeProvider } from "next-themes";
 import { LanguageProvider } from "@/i18n/LanguageContext";
+import { StoreProvider } from "@/lib/StoreContext";
 import { Layout } from "@/components/layout/Layout";
 
 import Home from "@/pages/Home";
@@ -21,10 +22,7 @@ const queryClient = new QueryClient();
 function Router() {
   return (
     <Switch>
-      {/* Admin — outside Layout (no customer header/footer) */}
       <Route path="/admin" component={Admin} />
-
-      {/* Public site — wrapped in Layout */}
       <Route>
         <Layout>
           <Switch>
@@ -48,14 +46,16 @@ function App() {
   return (
     <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
       <LanguageProvider>
-        <QueryClientProvider client={queryClient}>
-          <TooltipProvider>
-            <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
-              <Router />
-            </WouterRouter>
-            <Toaster />
-          </TooltipProvider>
-        </QueryClientProvider>
+        <StoreProvider>
+          <QueryClientProvider client={queryClient}>
+            <TooltipProvider>
+              <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
+                <Router />
+              </WouterRouter>
+              <Toaster />
+            </TooltipProvider>
+          </QueryClientProvider>
+        </StoreProvider>
       </LanguageProvider>
     </ThemeProvider>
   );
