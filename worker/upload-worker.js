@@ -24,11 +24,19 @@ export default {
     }
 
     try {
+      // Admin API endpoints (without /api/ prefix)
       if (path === '/upload' && request.method === 'POST') return handleUpload(request, env);
       if (path === '/products') return handleProducts(request, env);
       if (path === '/gallery') return handleGallery(request, env);
       if (path === '/settings') return handleSettings(request, env);
       if (path === '/test') return handleTest(env);
+
+      // Public API endpoints (with /api/ prefix)
+      if (path === '/api/upload' && request.method === 'POST') return handleUpload(request, env);
+      if (path === '/api/products') return handleProducts(request, env);
+      if (path === '/api/articles') return handleArticles(request, env);
+      if (path === '/api/settings') return handleSettings(request, env);
+
       return json({ error: 'Not found' }, 404);
     } catch (err) {
       console.error('Worker error:', err);
@@ -77,12 +85,13 @@ async function handleProducts(request, env) {
     const d = await request.json();
     const result = await env.DB.prepare(
       `INSERT INTO products
-        (name, name_ar, category, type, price, description, description_ar, image_url, in_stock, featured, keywords)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+        (name, name_ar, name_en, category, type, price, description, description_ar, description_en, image_url, in_stock, featured, keywords, specs)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
     ).bind(
-      d.name, d.name_ar || null, d.category, d.type || 'food', d.price,
-      d.description || null, d.description_ar || null, d.image_url,
-      d.in_stock ? 1 : 0, d.featured ? 1 : 0, d.keywords || null
+      d.name, d.name_ar || null, d.name_en || null, d.category, d.type || 'food', d.price,
+      d.description || null, d.description_ar || null, d.description_en || null, d.image_url,
+      d.in_stock ? 1 : 0, d.featured ? 1 : 0, d.keywords || null,
+      d.specs ? JSON.stringify(d.specs) : null
     ).run();
     return json({ success: true, id: result.meta?.last_row_id });
   }
@@ -90,13 +99,14 @@ async function handleProducts(request, env) {
   if (request.method === 'PUT') {
     const d = await request.json();
     await env.DB.prepare(
-      `UPDATE products SET name=?, name_ar=?, category=?, type=?, price=?, description=?,
-       description_ar=?, image_url=?, in_stock=?, featured=?, keywords=?,
+      `UPDATE products SET name=?, name_ar=?, name_en=?, category=?, type=?, price=?, description=?,
+       description_ar=?, description_en=?, image_url=?, in_stock=?, featured=?, keywords=?, specs=?,
        updated_at=CURRENT_TIMESTAMP WHERE id=?`
     ).bind(
-      d.name, d.name_ar || null, d.category, d.type || 'food', d.price,
-      d.description || null, d.description_ar || null, d.image_url,
-      d.in_stock ? 1 : 0, d.featured ? 1 : 0, d.keywords || null, d.id
+      d.name, d.name_ar || null, d.name_en || null, d.category, d.type || 'food', d.price,
+      d.description || null, d.description_ar || null, d.description_en || null, d.image_url,
+      d.in_stock ? 1 : 0, d.featured ? 1 : 0, d.keywords || null,
+      d.specs ? JSON.stringify(d.specs) : null, d.id
     ).run();
     return json({ success: true });
   }
@@ -129,13 +139,15 @@ async function handleGallery(request, env) {
 
     const result = await env.DB.prepare(
       `INSERT INTO gallery
-        (image_url, title, title_ar, description, description_ar, alt_text, category, display_order, extra_images)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`
+        (image_url, title, title_ar, title_en, excerpt, excerpt_ar, excerpt_en, body, body_ar, body_en, alt_text, category, display_order, extra_images, date)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
     ).bind(
-      d.image_url, d.title || 'Untitled', d.title_ar || null,
-      d.description || null, d.description_ar || null,
+      d.image_url, d.title || 'Untitled', d.title_ar || null, d.title_en || null,
+      d.excerpt || null, d.excerpt_ar || null, d.excerpt_en || null,
+      d.body || null, d.body_ar || null, d.body_en || null,
       d.alt_text || d.title || 'Gallery Image',
-      d.category || null, d.display_order || 0, extraImages
+      d.category || null, d.display_order || 0, extraImages,
+      d.date || null
     ).run();
     return json({ success: true, last_row_id: result.meta?.last_row_id });
   }
@@ -147,14 +159,15 @@ async function handleGallery(request, env) {
       : (typeof d.extra_images === 'string' ? d.extra_images : null);
 
     await env.DB.prepare(
-      `UPDATE gallery SET image_url=?, title=?, title_ar=?, description=?, description_ar=?,
-       alt_text=?, category=?, display_order=?, extra_images=?, updated_at=CURRENT_TIMESTAMP
-       WHERE id=?`
+      `UPDATE gallery SET image_url=?, title=?, title_ar=?, title_en=?, excerpt=?, excerpt_ar=?, excerpt_en=?,
+       body=?, body_ar=?, body_en=?, alt_text=?, category=?, display_order=?, extra_images=?, date=?,
+       updated_at=CURRENT_TIMESTAMP WHERE id=?`
     ).bind(
-      d.image_url, d.title || 'Untitled', d.title_ar || null,
-      d.description || null, d.description_ar || null,
+      d.image_url, d.title || 'Untitled', d.title_ar || null, d.title_en || null,
+      d.excerpt || null, d.excerpt_ar || null, d.excerpt_en || null,
+      d.body || null, d.body_ar || null, d.body_en || null,
       d.alt_text || d.title || 'Gallery Image',
-      d.category || null, d.display_order || 0, extraImages, d.id
+      d.category || null, d.display_order || 0, extraImages, d.date || null, d.id
     ).run();
     return json({ success: true });
   }
@@ -166,6 +179,12 @@ async function handleGallery(request, env) {
   }
 
   return json({ error: 'Method not allowed' }, 405);
+}
+
+/* ── Articles (mapped to gallery for compatibility) ── */
+async function handleArticles(request, env) {
+  // Articles are stored in the gallery table
+  return handleGallery(request, env);
 }
 
 /* ── Settings ── */
