@@ -1,3 +1,17 @@
+/**
+ * Kindo Cloudflare Worker
+ *
+ * Bindings required (wrangler.toml):
+ *   DB  → D1 database  (products, articles, settings)
+ *   R2  → R2 bucket    (image storage)
+ *
+ * Vars required (wrangler.toml [vars]):
+ *   R2_PUBLIC_URL → e.g. https://pub-xxx.r2.dev
+ *
+ * Images are uploaded to R2 and served directly via the public R2 URL
+ * — no Worker CPU cost for image serving.
+ */
+
 const CORS = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'GET,PUT,POST,DELETE,OPTIONS',
@@ -22,7 +36,7 @@ async function handleRequest(request, env) {
   const path = url.pathname;
   const method = request.method;
 
-  /* ── POST /api/upload ── upload image to R2 */
+  /* ── POST /api/upload — upload image to R2, return public CDN URL ── */
   if (path === '/api/upload' && method === 'POST') {
     let formData;
     try { formData = await request.formData(); }
@@ -43,31 +57,13 @@ async function handleRequest(request, env) {
       return json({ error: `R2 upload failed: ${err.message}` }, 500);
     }
 
-    const imageUrl = `${url.origin}/api/images/${key}`;
+    // Serve image directly from the public R2 CDN URL (fast, no Worker cost)
+    const publicBase = (env.R2_PUBLIC_URL ?? '').replace(/\/$/, '');
+    const imageUrl = `${publicBase}/${key}`;
     return json({ url: imageUrl, key });
   }
 
-  /* ── GET /api/images/:key ── serve image from R2 */
-  if (path.startsWith('/api/images/') && method === 'GET') {
-    const key = path.slice('/api/images/'.length);
-    if (!key) return json({ error: 'Missing image key' }, 400);
-
-    let obj;
-    try { obj = await env.R2.get(key); }
-    catch (err) { return json({ error: `R2 read failed: ${err.message}` }, 500); }
-
-    if (!obj) return json({ error: 'Image not found' }, 404);
-
-    return new Response(obj.body, {
-      headers: {
-        'Content-Type': obj.httpMetadata?.contentType || 'image/jpeg',
-        'Cache-Control': 'public, max-age=31536000, immutable',
-        ...CORS,
-      },
-    });
-  }
-
-  /* ── GET|PUT /api/products|articles|settings ── D1 CRUD */
+  /* ── GET|PUT /api/products|articles|settings — D1 CRUD ── */
   const dataKey = DATA_KEYS.find(k => path === `/api/${k}`);
   if (dataKey) {
     if (method === 'GET') {
