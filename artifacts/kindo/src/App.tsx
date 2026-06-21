@@ -22,7 +22,7 @@ const queryClient = new QueryClient();
 function LoadingScreen() {
   return (
     <div className="min-h-screen bg-background flex flex-col items-center justify-center gap-6">
-      <span className="font-serif text-3xl font-bold tracking-widest text-primary">KINDO</span>
+      <span className="text-4xl font-bold text-red-600" style={{ fontFamily: "'Sigmar One', cursive", WebkitTextStroke: '2px white', paintOrder: 'stroke fill' }}>KINDO</span>
       <div className="w-7 h-7 border-[3px] border-primary border-t-transparent rounded-full animate-spin" />
     </div>
   );

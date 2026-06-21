@@ -93,7 +93,7 @@ export default function Admin() {
       <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
         <div className="w-full max-w-sm bg-white rounded-2xl shadow-xl p-8">
           <div className="text-center mb-8">
-            <h1 className="font-serif text-3xl font-bold text-emerald-700 tracking-widest">KINDO</h1>
+            <h1 className="text-4xl font-bold text-red-600" style={{ fontFamily: "'Sigmar One', cursive", WebkitTextStroke: '2px white', paintOrder: 'stroke fill' }}>KINDO</h1>
             <p className="text-slate-500 text-sm mt-1">Administration — Accès sécurisé</p>
           </div>
           <form onSubmit={handleLogin} className="space-y-4">
@@ -126,7 +126,7 @@ export default function Admin() {
   const SidebarContent = () => (
     <div className="flex flex-col h-full bg-slate-900 text-white w-64">
       <div className="p-6 border-b border-slate-700">
-        <span className="font-serif text-2xl font-bold tracking-widest text-emerald-400">KINDO</span>
+        <span className="text-2xl font-bold text-red-600" style={{ fontFamily: "'Sigmar One', cursive", WebkitTextStroke: '1.5px white', paintOrder: 'stroke fill' }}>KINDO</span>
         <p className="text-slate-400 text-xs mt-0.5">Admin Panel</p>
       </div>
       <nav className="flex-1 p-4 space-y-1">

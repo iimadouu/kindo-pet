@@ -97,10 +97,10 @@ export default function Home() {
   return (
     <div className="w-full">
       {/* Hero */}
-      <section className="relative h-[50vh] md:h-[80vh] min-h-[400px] md:min-h-[600px] w-full flex items-center justify-center overflow-hidden">
+      <section className="relative h-[50vh] md:h-[80vh] min-h-[400px] md:min-h-[600px] w-full flex items-center justify-center overflow-hidden bg-sky-100">
         <div className="absolute inset-0 z-0">
-          <img src={heroImage} alt="Kindo Hero" className="w-full h-full object-cover object-center md:object-center object-[center_30%]" />
-          <div className="absolute inset-0 bg-black/40" />
+          <img src={heroImage} alt="Kindo Hero" className="w-full h-full object-contain md:object-cover object-center" />
+          <div className="absolute inset-0 bg-black/20 md:bg-black/40" />
         </div>
         <div className="container relative z-10 mx-auto px-4 text-center">
           <motion.div

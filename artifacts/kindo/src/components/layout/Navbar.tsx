@@ -34,8 +34,10 @@ export function Navbar() {
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
         
         {/* Logo */}
-        <Link href="/" className="font-serif text-2xl font-bold tracking-wider text-primary flex items-center gap-2">
-          KINDO
+        <Link href="/" className="flex items-center gap-2">
+          <span className="text-3xl font-bold tracking-wider text-red-600" style={{ fontFamily: "'Sigmar One', cursive", WebkitTextStroke: '2px white', paintOrder: 'stroke fill' }}>
+            KINDO
+          </span>
         </Link>
 
         {/* Desktop Nav */}

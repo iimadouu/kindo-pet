@@ -15,8 +15,10 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
 
           <div className="md:col-span-1">
-            <Link href="/" className="font-serif text-3xl font-bold tracking-wider text-primary block mb-4">
-              KINDO
+            <Link href="/" className="block mb-4">
+              <span className="text-3xl font-bold tracking-wider text-red-600" style={{ fontFamily: "'Sigmar One', cursive", WebkitTextStroke: '2px white', paintOrder: 'stroke fill' }}>
+                KINDO
+              </span>
             </Link>
             <p className="text-muted-foreground text-sm leading-relaxed mb-6 max-w-xs">
               {language === 'ar'
