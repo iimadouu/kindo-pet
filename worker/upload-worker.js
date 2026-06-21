@@ -151,15 +151,19 @@ async function bulkSyncProducts(products, env) {
         continue; // Skip invalid products
       }
       
+      // Don't include 'id' in INSERT - let DB auto-generate it
       statements.push(
         env.DB.prepare(
           `INSERT INTO products
             (name, name_ar, name_en, category, type, price, description, description_ar, description_en, image_url, in_stock, featured, keywords, specs)
            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
         ).bind(
-          d.name, d.name_ar || null, d.name_en || null, d.category, d.type || 'food', d.price || 0,
+          d.name, d.name_ar || null, d.name_en || null, d.category, d.type || 'food', 
+          parseFloat(d.price) || 0,
           d.description || null, d.description_ar || null, d.description_en || null, d.image_url || null,
-          d.in_stock !== undefined ? d.in_stock : 1, d.featured ? 1 : 0, d.keywords || null,
+          d.in_stock !== undefined ? (d.in_stock ? 1 : 0) : 1, 
+          d.featured ? 1 : 0, 
+          d.keywords || null,
           d.specs ? (typeof d.specs === 'string' ? d.specs : JSON.stringify(d.specs)) : null
         )
       );
