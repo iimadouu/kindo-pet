@@ -86,7 +86,7 @@ function AdBanner({ settings, language }: { settings: KindoSettings; language: s
   );
 }
 
-const heroImage = 'https://pub-943bd5d0ce6f4df9b0b9cbc05bec9e54.r2.dev/img.png';
+const heroImage = 'https://pub-943bd5d0ce6f4df9b0b9cbc05bec9e54.r2.dev/img.png'; // hero image
 
 export default function Home() {
   const { language, t } = useLanguage();
