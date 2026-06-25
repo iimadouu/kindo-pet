@@ -69,26 +69,30 @@ export function ProductCard({ product }: { product: Product }) {
       </CardContent>
 
       <CardFooter className="flex flex-col gap-3 p-4 pt-0">
-        <div className="grid grid-cols-[auto_1fr] gap-3 w-full items-center">
-          <div className="flex items-center space-x-1 rounded-full border border-border bg-muted/50 px-2 py-1">
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-8 w-8 rounded-full"
-              onClick={() => setQuantity(prev => Math.max(1, prev - 1))}
-            >
-              -
-            </Button>
-            <span className="min-w-[2rem] text-center font-semibold">{quantity}</span>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-8 w-8 rounded-full"
-              onClick={() => setQuantity(prev => prev + 1)}
-            >
-              +
-            </Button>
+        <div className="flex flex-col gap-3 w-full">
+          <div className="flex items-center justify-between rounded-full border border-border bg-muted/50 px-3 py-2">
+            <span className="text-sm font-medium text-foreground/80">{t('common.quantity')}</span>
+            <div className="flex items-center space-x-1 rounded-full bg-background p-1">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8 rounded-full"
+                onClick={() => setQuantity(prev => Math.max(1, prev - 1))}
+              >
+                -
+              </Button>
+              <span className="min-w-[2rem] text-center font-semibold">{quantity}</span>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8 rounded-full"
+                onClick={() => setQuantity(prev => prev + 1)}
+              >
+                +
+              </Button>
+            </div>
           </div>
+
           <Button
             className={`w-full ${isAdding ? 'scale-95' : ''}`}
             onClick={() => {
@@ -100,6 +104,7 @@ export function ProductCard({ product }: { product: Product }) {
             {actionLabel}
           </Button>
         </div>
+
         <div className="flex items-center justify-between text-sm text-muted-foreground">
           <span>{t('common.total')}</span>
           <span className="font-semibold">
