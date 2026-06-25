@@ -37,6 +37,11 @@ export default function ProductDetail() {
     .filter(p => p.category === product.category && p.id !== product.id)
     .slice(0, 4);
 
+  const featuredProducts = products
+    .filter(p => p.featured)
+    .sort(() => Math.random() - 0.5)
+    .slice(0, 8);
+
   const handleShare = async () => {
     if (navigator.share) {
       await navigator.share({ title: product.nameFR, url: window.location.href });
@@ -163,6 +168,21 @@ export default function ProductDetail() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
             {recommended.map(p => (
               <ProductCard key={p.id} product={p} />
+            ))}
+          </div>
+        </section>
+      )}
+
+      {featuredProducts.length > 0 && (
+        <section className="pt-16 border-t border-border">
+          <h2 className="font-serif text-2xl font-bold mb-8">
+            {language === 'ar' ? '⭐ منتجات مميزة' : '⭐ Produits vedette'}
+          </h2>
+          <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide snap-x snap-mandatory">
+            {featuredProducts.map(p => (
+              <div key={p.id} className="shrink-0 w-48 md:w-56 snap-start">
+                <ProductCard product={p} />
+              </div>
             ))}
           </div>
         </section>
