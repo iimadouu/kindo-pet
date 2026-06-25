@@ -10,6 +10,17 @@
 import { Product } from '@/data/catalog';
 import { Article } from '@/data/gallery';
 
+const normalizeCategoryValue = (value: string | null | undefined): Product['category'] => {
+  const normalized = String(value || 'none').trim().toLowerCase();
+  if (normalized === 'dog') return 'dogs';
+  if (normalized === 'cat') return 'cats';
+  if (normalized === 'bird') return 'birds';
+  if (normalized === 'fish') return 'fish';
+  return normalized === 'dogs' || normalized === 'cats' || normalized === 'birds' || normalized === 'none'
+    ? normalized
+    : 'none';
+};
+
 // ============================================================================
 // PRODUCT MAPPERS
 // ============================================================================
@@ -26,7 +37,7 @@ export function productFromDb(dbProduct: any): Product {
     nameAR: dbProduct.name_ar || '',
     descriptionFR: dbProduct.description || '',
     descriptionAR: dbProduct.description_ar || '',
-    category: (dbProduct.category || 'none') as Product['category'],
+    category: normalizeCategoryValue(dbProduct.category),
     type: dbProduct.type || 'food',
     foodCategory: dbProduct.food_category || '',
     foodCategoryAR: dbProduct.food_category_ar || '',

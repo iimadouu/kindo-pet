@@ -125,7 +125,10 @@ export default function Catalog() {
 
   const availableFoodCategories = useMemo(() => {
     return Array.from(new Set(products
-      .filter(p => p.type === 'food' && (selectedCategories.length === 0 || selectedCategories.includes(p.category)))
+      .filter(p => {
+        const productCategory = normalizeCategory(p.category);
+        return p.type === 'food' && (selectedCategories.length === 0 || selectedCategories.includes(productCategory));
+      })
       .map(p => (p.foodCategory || '').trim())
       .filter(Boolean)
     ));
@@ -133,7 +136,10 @@ export default function Catalog() {
 
   const availableAccessoryCategories = useMemo(() => {
     return Array.from(new Set(products
-      .filter(p => p.type === 'accessory' && (selectedCategories.length === 0 || selectedCategories.includes(p.category)))
+      .filter(p => {
+        const productCategory = normalizeCategory(p.category);
+        return p.type === 'accessory' && (selectedCategories.length === 0 || selectedCategories.includes(productCategory));
+      })
       .map(p => (p.accessoryCategory || '').trim())
       .filter(Boolean)
     ));
@@ -156,7 +162,8 @@ export default function Catalog() {
         t(`nav.${p.category}`).toLowerCase().includes(searchText) ||
         t(`nav.${p.type}`).toLowerCase().includes(searchText);
       
-      const matchCategory = selectedCategories.length === 0 || selectedCategories.includes(p.category);
+      const productCategory = normalizeCategory(p.category);
+      const matchCategory = selectedCategories.length === 0 || selectedCategories.includes(productCategory);
       const matchType = selectedTypes.length === 0 || selectedTypes.includes(p.type);
       const matchFoodCategory = selectedFoodCategories.length === 0 || (p.type === 'food' && selectedFoodCategories.includes(p.foodCategory || ''));
       const matchAccessoryCategory = selectedAccessoryCategories.length === 0 || (p.type === 'accessory' && selectedAccessoryCategories.includes(p.accessoryCategory || ''));
