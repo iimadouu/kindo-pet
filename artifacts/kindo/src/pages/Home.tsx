@@ -107,13 +107,13 @@ export default function Home() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            className="max-w-3xl mx-auto text-white h-full flex flex-col justify-between py-10"
+            className="max-w-3xl mx-auto text-white h-full flex flex-col justify-between py-10 md:text-center md:dir-ltr"
           >
             <div>
               <h1 className="font-serif text-3xl md:text-7xl font-bold mb-6 leading-tight">{t('home.heroTitle')}</h1>
               <p className="text-lg md:text-xl text-white/90 mb-10 max-w-2xl mx-auto font-light">{t('home.heroSubtitle')}</p>
             </div>
-            <div className="mt-auto">
+            <div className="mt-auto md:flex md:justify-center">
               <Button size="lg" asChild className="text-base h-14 px-8 rounded-full">
                 <Link href="/catalog">{t('home.heroCta')}</Link>
               </Button>

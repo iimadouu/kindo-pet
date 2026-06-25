@@ -7,7 +7,7 @@ export default function PrivacyPolicy() {
   const content = {
     fr: {
       title: 'Politique de confidentialité',
-      lastUpdated: 'Dernière mise à jour : Juin 2025',
+      lastUpdated: 'Dernière mise à jour : Juin 2026',
       sections: [
         {
           heading: '1. Collecte des informations',

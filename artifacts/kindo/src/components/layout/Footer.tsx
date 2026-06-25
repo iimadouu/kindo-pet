@@ -10,12 +10,12 @@ export function Footer() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="bg-card border-t border-border mt-auto">
+    <footer className="bg-card border-t border-border mt-auto relative z-10 pointer-events-auto">
       <div className="container mx-auto px-4 py-12 md:py-16">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
 
           <div className="md:col-span-1">
-            <Link href="/" className="block mb-4">
+            <Link href="/" className="block mb-4 pointer-events-auto touch-manipulation">
               <span className="text-3xl font-bold tracking-wider text-red-600" style={{ fontFamily: "'Sigmar One', cursive", WebkitTextStroke: '2px white', paintOrder: 'stroke fill' }}>
                 KINDO
               </span>
@@ -30,7 +30,7 @@ export function Footer() {
                 href={settings.facebookUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-10 h-10 rounded-full bg-muted flex items-center justify-center text-foreground hover:bg-primary hover:text-primary-foreground transition-colors"
+                className="w-10 h-10 rounded-full bg-muted flex items-center justify-center text-foreground hover:bg-primary hover:text-primary-foreground transition-colors pointer-events-auto touch-manipulation"
               >
                 <Facebook className="w-5 h-5" />
               </a>
@@ -38,7 +38,7 @@ export function Footer() {
                 href={settings.instagramUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-10 h-10 rounded-full bg-muted flex items-center justify-center text-foreground hover:bg-primary hover:text-primary-foreground transition-colors"
+                className="w-10 h-10 rounded-full bg-muted flex items-center justify-center text-foreground hover:bg-primary hover:text-primary-foreground transition-colors pointer-events-auto touch-manipulation"
               >
                 <Instagram className="w-5 h-5" />
               </a>
@@ -48,10 +48,10 @@ export function Footer() {
           <div>
             <h4 className="font-bold text-foreground mb-4">{t('nav.catalog')}</h4>
             <ul className="space-y-2 text-sm text-muted-foreground">
-              <li><Link href="/catalog/dogs" className="hover:text-primary transition-colors">{t('nav.dogs')}</Link></li>
-              <li><Link href="/catalog/cats" className="hover:text-primary transition-colors">{t('nav.cats')}</Link></li>
-              <li><Link href="/catalog/birds" className="hover:text-primary transition-colors">{t('nav.birds')}</Link></li>
-              <li><Link href="/catalog/fish" className="hover:text-primary transition-colors">{t('nav.fish')}</Link></li>
+              <li><Link href="/catalog/dogs" className="hover:text-primary transition-colors py-1 block pointer-events-auto touch-manipulation">{t('nav.dogs')}</Link></li>
+              <li><Link href="/catalog/cats" className="hover:text-primary transition-colors py-1 block pointer-events-auto touch-manipulation">{t('nav.cats')}</Link></li>
+              <li><Link href="/catalog/birds" className="hover:text-primary transition-colors py-1 block pointer-events-auto touch-manipulation">{t('nav.birds')}</Link></li>
+              <li><Link href="/catalog/fish" className="hover:text-primary transition-colors py-1 block pointer-events-auto touch-manipulation">{t('nav.fish')}</Link></li>
             </ul>
           </div>
 
@@ -60,9 +60,9 @@ export function Footer() {
               {language === 'ar' ? 'الشركة' : 'Entreprise'}
             </h4>
             <ul className="space-y-2 text-sm text-muted-foreground">
-              <li><Link href="/about" className="hover:text-primary transition-colors">{t('nav.about')}</Link></li>
-              <li><Link href="/gallery" className="hover:text-primary transition-colors">{t('nav.gallery')}</Link></li>
-              <li><Link href="/contact" className="hover:text-primary transition-colors">{t('nav.contact')}</Link></li>
+              <li><Link href="/about" className="hover:text-primary transition-colors py-1 block pointer-events-auto touch-manipulation">{t('nav.about')}</Link></li>
+              <li><Link href="/gallery" className="hover:text-primary transition-colors py-1 block pointer-events-auto touch-manipulation">{t('nav.gallery')}</Link></li>
+              <li><Link href="/contact" className="hover:text-primary transition-colors py-1 block pointer-events-auto touch-manipulation">{t('nav.contact')}</Link></li>
             </ul>
           </div>
 
@@ -76,7 +76,7 @@ export function Footer() {
                   href={`https://wa.me/${settings.whatsappNumber}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 text-[#25D366] hover:underline font-medium mt-2"
+                  className="inline-flex items-center gap-2 text-[#25D366] hover:underline font-medium mt-2 pointer-events-auto touch-manipulation"
                 >
                   <MessageCircle className="w-4 h-4" />
                   {t('common.orderViaWhatsapp')}
@@ -92,13 +92,13 @@ export function Footer() {
           <div className="flex gap-4">
             <Link 
               href="/privacy" 
-              className="hover:text-foreground transition-colors py-2 px-1 active:scale-95 touch-manipulation"
+              className="hover:text-foreground transition-colors py-2 px-1 active:scale-95 touch-manipulation pointer-events-auto"
             >
               {t('legal.privacyPolicy')}
             </Link>
             <Link 
               href="/terms" 
-              className="hover:text-foreground transition-colors py-2 px-1 active:scale-95 touch-manipulation"
+              className="hover:text-foreground transition-colors py-2 px-1 active:scale-95 touch-manipulation pointer-events-auto"
             >
               {t('legal.termsOfUse')}
             </Link>

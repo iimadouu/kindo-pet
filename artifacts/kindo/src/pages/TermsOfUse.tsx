@@ -7,7 +7,7 @@ export default function TermsOfUse() {
   const content = {
     fr: {
       title: 'Conditions générales d\'utilisation',
-      lastUpdated: 'Dernière mise à jour : Juin 2025',
+      lastUpdated: 'Dernière mise à jour : Juin 2026',
       sections: [
         {
           heading: '1. Objet',
