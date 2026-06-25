@@ -38,7 +38,7 @@ export default function ProductDetail() {
     .slice(0, 4);
 
   const featuredProducts = products
-    .filter(p => p.featured)
+    .filter(p => p.featured && p.category === product.category && p.id !== product.id)
     .sort(() => Math.random() - 0.5)
     .slice(0, 8);
 
