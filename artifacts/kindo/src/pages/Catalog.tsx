@@ -237,7 +237,7 @@ export default function Catalog() {
                 <span>{t('common.min')}</span>
                 <span>{priceRange[0].toLocaleString('fr-DZ')} {t('common.currency')}</span>
               </div>
-            const matchSearch = rawSearch.trim() === ''
+              <input
                 type="range"
                 min={0}
                 max={1000000}
