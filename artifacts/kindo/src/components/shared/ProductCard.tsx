@@ -72,7 +72,7 @@ export function ProductCard({ product }: { product: Product }) {
         <div className="flex flex-col gap-3 w-full">
           <div className="flex items-center justify-between rounded-full border border-border bg-muted/50 px-3 py-2">
             <span className="text-sm font-medium text-foreground/80">{t('common.quantity')}</span>
-            <div className="flex items-center space-x-1 rounded-full bg-background p-1">
+            <div className="inline-flex items-center justify-center gap-1 rounded-full bg-background px-1.5 py-1">
               <Button
                 variant="ghost"
                 size="icon"
@@ -81,7 +81,7 @@ export function ProductCard({ product }: { product: Product }) {
               >
                 -
               </Button>
-              <span className="min-w-[2rem] text-center font-semibold">{quantity}</span>
+              <span className="w-8 text-center text-sm font-semibold">{quantity}</span>
               <Button
                 variant="ghost"
                 size="icon"

@@ -120,7 +120,7 @@ export default function Home() {
 
       {/* Partners Marquee */}
       <section className="border-b border-border bg-card py-6 overflow-hidden">
-        <div className="flex gap-10 items-center animate-marquee whitespace-nowrap opacity-60">
+        <div className={`flex gap-10 items-center whitespace-nowrap opacity-60 ${language === 'ar' ? 'animate-marquee-right' : 'animate-marquee-left'}`}>
           {[...partnerMarquee, ...partnerMarquee].map((name, i) => (
             <div key={i} className="text-sm font-semibold tracking-wider uppercase flex-shrink-0 px-2">{name}</div>
           ))}
