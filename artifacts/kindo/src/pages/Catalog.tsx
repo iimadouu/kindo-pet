@@ -21,6 +21,15 @@ export default function Catalog() {
   const initialCategory = (params as { category?: string }).category || 'all';
   const query = useMemo(() => new URLSearchParams(location.split('?')[1] || ''), [location]);
 
+  const normalizeCategory = (value: string | null) => {
+    if (!value) return '';
+    const normalized = value.trim().toLowerCase();
+    if (normalized === 'dog') return 'dogs';
+    if (normalized === 'cat') return 'cats';
+    if (normalized === 'bird') return 'birds';
+    return normalized;
+  };
+
   const parseList = (value: string | null) =>
     value ? value.split(',').map(v => v.trim()).filter(Boolean) : [];
 
@@ -34,8 +43,8 @@ export default function Catalog() {
 
   useEffect(() => {
     setSearch(query.get('search') || '');
-    const categoryFromQuery = query.get('category');
-    const initial = categoryFromQuery || initialCategory;
+    const categoryFromQuery = normalizeCategory(query.get('category') || query.get('categoy'));
+    const initial = categoryFromQuery || normalizeCategory(initialCategory);
     setSelectedCategories(initial && initial !== 'all' ? [initial] : []);
     setSelectedTypes(query.get('type') ? [query.get('type') as string] : []);
     setSelectedFoodCategories(parseList(query.get('foodCategory')));
