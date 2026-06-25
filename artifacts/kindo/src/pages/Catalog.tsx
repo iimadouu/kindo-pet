@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useLanguage } from '@/i18n/LanguageContext';
 import { useStore } from '@/lib/StoreContext';
 import { ProductCard } from '@/components/shared/ProductCard';
@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
-import { useParams } from 'wouter';
+import { useParams, useLocation } from 'wouter';
 import { ChevronLeft, ChevronRight, Search, Filter } from 'lucide-react';
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { Separator } from '@/components/ui/separator';
@@ -17,19 +17,31 @@ export default function Catalog() {
   const { language, t } = useLanguage();
   const { products } = useStore();
   const params = useParams();
+  const [location] = useLocation();
   const initialCategory = (params as { category?: string }).category || 'all';
-  
-  // Get search query from URL
-  const urlParams = new URLSearchParams(window.location.search);
-  const urlSearch = urlParams.get('search') || '';
+  const query = useMemo(() => new URLSearchParams(location.split('?')[1] || ''), [location]);
 
-  const [search, setSearch] = useState(urlSearch);
-  const [selectedCategories, setSelectedCategories] = useState<string[]>(
-    initialCategory !== 'all' ? [initialCategory] : []
-  );
+  const parseList = (value: string | null) =>
+    value ? value.split(',').map(v => v.trim()).filter(Boolean) : [];
+
+  const [search, setSearch] = useState('');
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
+  const [selectedFoodCategories, setSelectedFoodCategories] = useState<string[]>([]);
+  const [selectedAccessoryCategories, setSelectedAccessoryCategories] = useState<string[]>([]);
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 1000000]);
   const [page, setPage] = useState(1);
+
+  useEffect(() => {
+    setSearch(query.get('search') || '');
+    const categoryFromQuery = query.get('category');
+    const initial = categoryFromQuery || initialCategory;
+    setSelectedCategories(initial && initial !== 'all' ? [initial] : []);
+    setSelectedTypes(query.get('type') ? [query.get('type') as string] : []);
+    setSelectedFoodCategories(parseList(query.get('foodCategory')));
+    setSelectedAccessoryCategories(parseList(query.get('accessoryCategory')));
+    setPage(1);
+  }, [location, query, initialCategory]);
 
   const categories = ['dogs', 'cats', 'birds', 'fish', 'none'];
   const types = ['food', 'accessory'];
@@ -42,8 +54,29 @@ export default function Catalog() {
   };
 
   const handleTypeToggle = (type: string) => {
-    setSelectedTypes(prev =>
-      prev.includes(type) ? prev.filter(t => t !== type) : [...prev, type]
+    setSelectedTypes(prev => {
+      const next = prev.includes(type) ? prev.filter(t => t !== type) : [...prev, type];
+      if (!next.includes('food')) {
+        setSelectedFoodCategories([]);
+      }
+      if (!next.includes('accessory')) {
+        setSelectedAccessoryCategories([]);
+      }
+      return next;
+    });
+    setPage(1);
+  };
+
+  const handleFoodCategoryToggle = (category: string) => {
+    setSelectedFoodCategories(prev =>
+      prev.includes(category) ? prev.filter(c => c !== category) : [...prev, category]
+    );
+    setPage(1);
+  };
+
+  const handleAccessoryCategoryToggle = (category: string) => {
+    setSelectedAccessoryCategories(prev =>
+      prev.includes(category) ? prev.filter(c => c !== category) : [...prev, category]
     );
     setPage(1);
   };
@@ -59,6 +92,22 @@ export default function Catalog() {
     });
     setPage(1);
   };
+
+  const availableFoodCategories = useMemo(() => {
+    return Array.from(new Set(products
+      .filter(p => p.type === 'food' && (selectedCategories.length === 0 || selectedCategories.includes(p.category)))
+      .map(p => (p.foodCategory || '').trim())
+      .filter(Boolean)
+    ));
+  }, [products, selectedCategories]);
+
+  const availableAccessoryCategories = useMemo(() => {
+    return Array.from(new Set(products
+      .filter(p => p.type === 'accessory' && (selectedCategories.length === 0 || selectedCategories.includes(p.category)))
+      .map(p => (p.accessoryCategory || '').trim())
+      .filter(Boolean)
+    ));
+  }, [products, selectedCategories]);
 
   const filteredProducts = useMemo(() => {
     return products.filter(p => {
@@ -79,10 +128,12 @@ export default function Catalog() {
       
       const matchCategory = selectedCategories.length === 0 || selectedCategories.includes(p.category);
       const matchType = selectedTypes.length === 0 || selectedTypes.includes(p.type);
+      const matchFoodCategory = selectedFoodCategories.length === 0 || (p.type === 'food' && selectedFoodCategories.includes(p.foodCategory || ''));
+      const matchAccessoryCategory = selectedAccessoryCategories.length === 0 || (p.type === 'accessory' && selectedAccessoryCategories.includes(p.accessoryCategory || ''));
       const matchPrice = p.price >= priceRange[0] && p.price <= priceRange[1];
-      return matchSearch && matchCategory && matchType && matchPrice;
+      return matchSearch && matchCategory && matchType && matchFoodCategory && matchAccessoryCategory && matchPrice;
     });
-  }, [products, search, selectedCategories, selectedTypes, priceRange, t]);
+  }, [products, search, selectedCategories, selectedTypes, selectedFoodCategories, selectedAccessoryCategories, priceRange, t]);
 
   const totalPages = Math.ceil(filteredProducts.length / ITEMS_PER_PAGE);
   const currentProducts = filteredProducts.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE);
@@ -124,34 +175,102 @@ export default function Catalog() {
       <div>
         <h3 className="font-bold mb-4">{t('common.price')}</h3>
         <div className="space-y-4 text-sm text-slate-600">
-          <div className="flex items-center justify-between">
-            <span>{t('common.min')}</span>
-            <span>{priceRange[0].toLocaleString('fr-DZ')} {t('common.currency')}</span>
+          <div className="grid grid-cols-2 gap-4 items-center">
+            <div>
+              <div className="flex items-center justify-between">
+                <span>{t('common.min')}</span>
+                <span>{priceRange[0].toLocaleString('fr-DZ')} {t('common.currency')}</span>
+              </div>
+              <input
+                type="range"
+                min={0}
+                max={1000000}
+                step={50}
+                value={priceRange[0]}
+                onChange={(e) => updatePriceRange(0, Number(e.target.value))}
+                className="w-full"
+              />
+            </div>
+            <div>
+              <div className="flex items-center justify-between">
+                <span>{t('common.max')}</span>
+                <span>{priceRange[1].toLocaleString('fr-DZ')} {t('common.currency')}</span>
+              </div>
+              <input
+                type="range"
+                min={0}
+                max={1000000}
+                step={50}
+                value={priceRange[1]}
+                onChange={(e) => updatePriceRange(1, Number(e.target.value))}
+                className="w-full"
+              />
+            </div>
           </div>
-          <input
-            type="range"
-            min={0}
-            max={1000000}
-            step={1000}
-            value={priceRange[0]}
-            onChange={(e) => updatePriceRange(0, Number(e.target.value))}
-            className="w-full"
-          />
-          <div className="flex items-center justify-between">
-            <span>{t('common.max')}</span>
-            <span>{priceRange[1].toLocaleString('fr-DZ')} {t('common.currency')}</span>
+          <div className="grid grid-cols-2 gap-4">
+            <input
+              type="number"
+              min={0}
+              max={priceRange[1]}
+              step={50}
+              value={priceRange[0]}
+              onChange={(e) => updatePriceRange(0, Number(e.target.value))}
+              className="w-full border rounded-md px-3 py-2"
+              aria-label="Minimum price"
+            />
+            <input
+              type="number"
+              min={priceRange[0]}
+              max={1000000}
+              step={50}
+              value={priceRange[1]}
+              onChange={(e) => updatePriceRange(1, Number(e.target.value))}
+              className="w-full border rounded-md px-3 py-2"
+              aria-label="Maximum price"
+            />
           </div>
-          <input
-            type="range"
-            min={0}
-            max={1000000}
-            step={1000}
-            value={priceRange[1]}
-            onChange={(e) => updatePriceRange(1, Number(e.target.value))}
-            className="w-full"
-          />
         </div>
       </div>
+      {selectedTypes.includes('food') && availableFoodCategories.length > 0 && (
+        <>
+          <Separator />
+          <div>
+            <h3 className="font-bold mb-4">{t('catalog.foodCategory')}</h3>
+            <div className="space-y-3">
+              {availableFoodCategories.map(category => (
+                <div key={category} className="flex items-center space-x-2 rtl:space-x-reverse">
+                  <Checkbox
+                    id={`food-cat-${category}`}
+                    checked={selectedFoodCategories.includes(category)}
+                    onCheckedChange={() => handleFoodCategoryToggle(category)}
+                  />
+                  <Label htmlFor={`food-cat-${category}`} className="cursor-pointer">{category}</Label>
+                </div>
+              ))}
+            </div>
+          </div>
+        </>
+      )}
+      {selectedTypes.includes('accessory') && availableAccessoryCategories.length > 0 && (
+        <>
+          <Separator />
+          <div>
+            <h3 className="font-bold mb-4">{t('catalog.accessoryCategory')}</h3>
+            <div className="space-y-3">
+              {availableAccessoryCategories.map(category => (
+                <div key={category} className="flex items-center space-x-2 rtl:space-x-reverse">
+                  <Checkbox
+                    id={`accessory-cat-${category}`}
+                    checked={selectedAccessoryCategories.includes(category)}
+                    onCheckedChange={() => handleAccessoryCategoryToggle(category)}
+                  />
+                  <Label htmlFor={`accessory-cat-${category}`} className="cursor-pointer">{category}</Label>
+                </div>
+              ))}
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 

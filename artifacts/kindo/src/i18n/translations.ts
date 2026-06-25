@@ -2,6 +2,7 @@ export const translations = {
   fr: {
     nav: {
       home: "Accueil",
+      products: "Produits",
       catalog: "Catalogue",
       gallery: "Galerie",
       about: "À Propos",
@@ -43,6 +44,8 @@ export const translations = {
     catalog: {
       title: "Notre Catalogue",
       filterBy: "Filtrer par",
+      foodCategory: "Catégorie nourriture",
+      accessoryCategory: "Catégorie accessoire",
       noResults: "Aucun produit trouvé.",
       page: "Page",
       of: "sur",
@@ -71,6 +74,7 @@ export const translations = {
   ar: {
     nav: {
       home: "الرئيسية",
+      products: "المنتجات",
       catalog: "الكتالوج",
       gallery: "المعرض",
       about: "معلومات عنا",
@@ -112,6 +116,8 @@ export const translations = {
     catalog: {
       title: "الكتالوج",
       filterBy: "تصفية حسب",
+      foodCategory: "فئة الطعام",
+      accessoryCategory: "فئة الاكسسوار",
       noResults: "لم يتم العثور على منتجات.",
       page: "صفحة",
       of: "من",
