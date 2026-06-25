@@ -138,7 +138,7 @@ export function Navbar() {
                       </>
                     )}
                     {productMenuItems[animal].food.length === 0 && productMenuItems[animal].accessory.length === 0 && (
-                      <DropdownMenuItem onSelect={() => setLocation(`/catalog?category=${animal}`)}>
+                      <DropdownMenuItem onSelect={() => setLocation(`/catalog/${animal}`)}>
                         {t('common.all')}
                       </DropdownMenuItem>
                     )}
@@ -254,7 +254,7 @@ export function Navbar() {
                   )}
                   {productMenuItems[animal].food.length === 0 && productMenuItems[animal].accessory.length === 0 && (
                     <Link
-                      href={`/catalog?category=${animal}`}
+                      href={`/catalog/${animal}`}
                       className="block rounded-md px-3 py-2 text-sm text-foreground/80 hover:bg-muted"
                       onClick={() => setMobileMenuOpen(false)}
                     >
