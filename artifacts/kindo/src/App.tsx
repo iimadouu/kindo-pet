@@ -40,8 +40,10 @@ function Router() {
         <Layout>
           <Switch>
             <Route path="/" component={Home} />
-            <Route path="/catalog" component={Catalog} />
+            <Route path="/catalog/:category/:type/:subtype" component={Catalog} />
+            <Route path="/catalog/:category/:type" component={Catalog} />
             <Route path="/catalog/:category" component={Catalog} />
+            <Route path="/catalog" component={Catalog} />
             <Route path="/product/:id" component={ProductDetail} />
             <Route path="/gallery" component={Gallery} />
             <Route path="/article/:id" component={ArticleDetail} />

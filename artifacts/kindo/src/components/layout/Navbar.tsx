@@ -50,13 +50,10 @@ export function Navbar() {
   }, [products]);
 
   const buildCatalogUrl = ({ category, type, subtype }: { category?: string; type?: 'food' | 'accessory'; subtype?: string }) => {
-    const params = new URLSearchParams();
-    if (category) params.set('category', category);
-    if (type) params.set('type', type);
-    if (subtype) {
-      params.set(type === 'accessory' ? 'accessoryCategory' : 'foodCategory', subtype);
-    }
-    return `/catalog${params.toString() ? `?${params.toString()}` : ''}`;
+    if (!category) return '/catalog';
+    if (!type) return `/catalog/${encodeURIComponent(category)}`;
+    if (!subtype) return `/catalog/${encodeURIComponent(category)}/${encodeURIComponent(type)}`;
+    return `/catalog/${encodeURIComponent(category)}/${encodeURIComponent(type)}/${encodeURIComponent(subtype)}`;
   };
 
   const handleSearch = (e: React.FormEvent) => {
@@ -114,6 +111,12 @@ export function Navbar() {
                     {productMenuItems[animal].food.length > 0 && (
                       <>
                         <DropdownMenuLabel>{t('nav.food')}</DropdownMenuLabel>
+                        <DropdownMenuItem
+                          key={`${animal}-food-all`}
+                          onSelect={() => setLocation(buildCatalogUrl({ category: animal, type: 'food' }))}
+                        >
+                          {t('common.all')}
+                        </DropdownMenuItem>
                         {productMenuItems[animal].food.map(category => (
                           <DropdownMenuItem
                             key={`${animal}-food-${category}`}
@@ -225,6 +228,13 @@ export function Navbar() {
                   {productMenuItems[animal].food.length > 0 && (
                     <div className="space-y-1">
                       <div className="text-xs uppercase tracking-wide text-muted-foreground">{t('nav.food')}</div>
+                      <Link
+                        href={buildCatalogUrl({ category: animal, type: 'food' })}
+                        className="block rounded-md px-3 py-2 text-sm text-foreground/80 hover:bg-muted"
+                        onClick={() => setMobileMenuOpen(false)}
+                      >
+                        {t('common.all')}
+                      </Link>
                       {productMenuItems[animal].food.map(category => (
                         <Link
                           key={`${animal}-mobile-food-${category}`}

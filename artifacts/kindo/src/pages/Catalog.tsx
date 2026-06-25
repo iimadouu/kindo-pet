@@ -16,9 +16,9 @@ const ITEMS_PER_PAGE = 12;
 export default function Catalog() {
   const { language, t } = useLanguage();
   const { products } = useStore();
-  const params = useParams();
+  const params = useParams() as { category?: string; type?: string; subtype?: string };
   const [location] = useLocation();
-  const initialCategory = (params as { category?: string }).category || 'all';
+  const initialCategory = params.category || 'all';
   const query = useMemo(() => new URLSearchParams(location.split('?')[1] || ''), [location]);
 
   const normalizeCategory = (value: string | null) => {
@@ -28,6 +28,12 @@ export default function Catalog() {
     if (normalized === 'cat') return 'cats';
     if (normalized === 'bird') return 'birds';
     return normalized;
+  };
+
+  const normalizeType = (value: string | null) => {
+    if (!value) return '';
+    const normalized = value.trim().toLowerCase();
+    return normalized === 'food' || normalized === 'accessory' ? normalized : '';
   };
 
   const parseList = (value: string | null) =>
@@ -44,13 +50,28 @@ export default function Catalog() {
   useEffect(() => {
     setSearch(query.get('search') || '');
     const categoryFromQuery = normalizeCategory(query.get('category') || query.get('categoy'));
-    const initial = categoryFromQuery || normalizeCategory(initialCategory);
-    setSelectedCategories(initial && initial !== 'all' ? [initial] : []);
-    setSelectedTypes(query.get('type') ? [query.get('type') as string] : []);
-    setSelectedFoodCategories(parseList(query.get('foodCategory')));
-    setSelectedAccessoryCategories(parseList(query.get('accessoryCategory')));
+    const categoryFromPath = normalizeCategory(params.category || null);
+    const typeFromPath = normalizeType(params.type || null);
+    const typeFromQuery = normalizeType(query.get('type'));
+    const selectedCategory = categoryFromPath || categoryFromQuery || normalizeCategory(initialCategory);
+    const selectedType = typeFromPath || typeFromQuery;
+
+    setSelectedCategories(selectedCategory && selectedCategory !== 'all' ? [selectedCategory] : []);
+    setSelectedTypes(selectedType ? [selectedType] : []);
+
+    if (typeFromPath === 'food') {
+      setSelectedFoodCategories(params.subtype ? [params.subtype] : []);
+      setSelectedAccessoryCategories([]);
+    } else if (typeFromPath === 'accessory') {
+      setSelectedAccessoryCategories(params.subtype ? [params.subtype] : []);
+      setSelectedFoodCategories([]);
+    } else {
+      setSelectedFoodCategories(parseList(query.get('foodCategory')));
+      setSelectedAccessoryCategories(parseList(query.get('accessoryCategory')));
+    }
+
     setPage(1);
-  }, [location, query, initialCategory]);
+  }, [location, query, initialCategory, params.category, params.type, params.subtype]);
 
   const categories = ['dogs', 'cats', 'birds', 'fish', 'none'];
   const types = ['food', 'accessory'];
