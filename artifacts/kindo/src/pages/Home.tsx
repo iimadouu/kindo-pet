@@ -102,18 +102,22 @@ export default function Home() {
           <img src={heroImage} alt="Kindo Hero" className="w-full h-full object-contain md:object-cover object-center" />
           <div className="absolute inset-0 bg-black/20 md:bg-black/40" />
         </div>
-        <div className="container relative z-10 mx-auto px-4 text-center">
+        <div className="container relative z-10 mx-auto px-4 h-full">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            className="max-w-3xl mx-auto text-white"
+            className="max-w-3xl mx-auto text-white h-full flex flex-col justify-between py-10"
           >
-            <h1 className="font-serif text-3xl md:text-7xl font-bold mb-6 leading-tight">{t('home.heroTitle')}</h1>
-            <p className="text-lg md:text-xl text-white/90 mb-10 max-w-2xl mx-auto font-light">{t('home.heroSubtitle')}</p>
-            <Button size="lg" asChild className="text-base h-14 px-8 rounded-full">
-              <Link href="/catalog">{t('home.heroCta')}</Link>
-            </Button>
+            <div>
+              <h1 className="font-serif text-3xl md:text-7xl font-bold mb-6 leading-tight">{t('home.heroTitle')}</h1>
+              <p className="text-lg md:text-xl text-white/90 mb-10 max-w-2xl mx-auto font-light">{t('home.heroSubtitle')}</p>
+            </div>
+            <div className="mt-auto">
+              <Button size="lg" asChild className="text-base h-14 px-8 rounded-full">
+                <Link href="/catalog">{t('home.heroCta')}</Link>
+              </Button>
+            </div>
           </motion.div>
         </div>
       </section>
