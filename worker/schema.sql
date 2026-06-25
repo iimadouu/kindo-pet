@@ -19,6 +19,8 @@ CREATE TABLE IF NOT EXISTS products (
   specs        TEXT,
   food_category TEXT,
   food_category_ar TEXT,
+  accessory_category TEXT,
+  accessory_category_ar TEXT,
   created_at   TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at   TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
 );

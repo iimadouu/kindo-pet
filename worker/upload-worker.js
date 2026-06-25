@@ -125,10 +125,10 @@ async function handleProducts(request, env) {
     const d = await request.json();
     const result = await env.DB.prepare(
       `INSERT INTO products
-        (name, name_ar, name_en, category, type, food_category, food_category_ar, price, description, description_ar, description_en, image_url, in_stock, featured, keywords, specs)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+        (name, name_ar, name_en, category, type, food_category, food_category_ar, accessory_category, accessory_category_ar, price, description, description_ar, description_en, image_url, in_stock, featured, keywords, specs)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
     ).bind(
-      d.name, d.name_ar || null, d.name_en || null, d.category, d.type || 'food', d.food_category || null, d.food_category_ar || null, d.price,
+      d.name, d.name_ar || null, d.name_en || null, d.category, d.type || 'food', d.food_category || null, d.food_category_ar || null, d.accessory_category || null, d.accessory_category_ar || null, d.price,
       d.description || null, d.description_ar || null, d.description_en || null, d.image_url || null,
       d.in_stock !== undefined ? d.in_stock : 1, d.featured ? 1 : 0, d.keywords || null,
       d.specs ? (typeof d.specs === 'string' ? d.specs : JSON.stringify(d.specs)) : null
@@ -198,9 +198,9 @@ async function bulkSyncProducts(products, env) {
         statements.push(
           env.DB.prepare(
             `INSERT INTO products
-              (name, name_ar, name_en, category, type, food_category, food_category_ar, price, description, description_ar, description_en, image_url, in_stock, featured, keywords, specs)
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
-          ).bind(name, name_ar, name_en, category, type, (d.food_category || null), (d.food_category_ar || null), price, description, description_ar, description_en, image_url, in_stock, featured, keywords, specs)
+              (name, name_ar, name_en, category, type, food_category, food_category_ar, accessory_category, accessory_category_ar, price, description, description_ar, description_en, image_url, in_stock, featured, keywords, specs)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+          ).bind(name, name_ar, name_en, category, type, (d.food_category || null), (d.food_category_ar || null), (d.accessory_category || null), (d.accessory_category_ar || null), price, description, description_ar, description_en, image_url, in_stock, featured, keywords, specs)
         );
         console.log(`Product ${i} prepared successfully`);
       } catch (prepareError) {
@@ -242,11 +242,11 @@ async function bulkSyncProducts(products, env) {
 // Helper: Update a single product
 async function updateSingleProduct(d, env) {
   await env.DB.prepare(
-    `UPDATE products SET name=?, name_ar=?, name_en=?, category=?, type=?, food_category=?, food_category_ar=?, price=?, description=?,
+    `UPDATE products SET name=?, name_ar=?, name_en=?, category=?, type=?, food_category=?, food_category_ar=?, accessory_category=?, accessory_category_ar=?, price=?, description=?,
      description_ar=?, description_en=?, image_url=?, in_stock=?, featured=?, keywords=?, specs=?,
      updated_at=CURRENT_TIMESTAMP WHERE id=?`
   ).bind(
-    d.name, d.name_ar || null, d.name_en || null, d.category, d.type || 'food', d.food_category || null, d.food_category_ar || null, d.price,
+    d.name, d.name_ar || null, d.name_en || null, d.category, d.type || 'food', d.food_category || null, d.food_category_ar || null, d.accessory_category || null, d.accessory_category_ar || null, d.price,
     d.description || null, d.description_ar || null, d.description_en || null, d.image_url || null,
     d.in_stock !== undefined ? d.in_stock : 1, d.featured ? 1 : 0, d.keywords || null,
     d.specs ? (typeof d.specs === 'string' ? d.specs : JSON.stringify(d.specs)) : null,

@@ -101,6 +101,9 @@ export default function ProductDetail() {
             {product.foodCategory && (
               <Badge variant="outline">{product.foodCategory}</Badge>
             )}
+            {product.accessoryCategory && (
+              <Badge variant="outline">{product.accessoryCategory}</Badge>
+            )}
           </div>
 
           <h1 className="font-serif text-3xl md:text-5xl font-bold mb-4 leading-tight">{name}</h1>

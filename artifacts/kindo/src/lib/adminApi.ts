@@ -25,6 +25,8 @@ export interface AdminProduct {
   type: 'food' | 'accessory';
   food_category?: string;
   food_category_ar?: string;
+  accessory_category?: string;
+  accessory_category_ar?: string;
   price: number;
   description: string;
   description_ar: string;

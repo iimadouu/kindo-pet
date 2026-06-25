@@ -61,7 +61,7 @@ function rowsToSpecs(rows: SpecRow[]): Record<string, string> {
 
 const EMPTY_PRODUCT: Omit<Product, 'id'> = {
   nameFR: '', nameAR: '', descriptionFR: '', descriptionAR: '',
-  category: 'dogs', type: 'food', foodCategory: '', foodCategoryAR: '', price: 0, images: [''], specs: {}, featured: false,
+  category: 'dogs', type: 'food', foodCategory: '', foodCategoryAR: '', accessoryCategory: '', accessoryCategoryAR: '', price: 0, images: [''], specs: {}, featured: false,
 };
 const EMPTY_ARTICLE: Omit<Article, 'id'> = {
   titleFR: '', titleAR: '', excerptFR: '', excerptAR: '',
@@ -401,6 +401,18 @@ function ProductFormDialog({ product, onSave, onClose }: { product: Product | nu
     return map;
   }, [products]);
 
+  const accessoryCategoryMap = useMemo(() => {
+    const map: Record<string, string> = {};
+    products.forEach(p => {
+      const key = (p.accessoryCategory || '').trim();
+      const value = (p.accessoryCategoryAR || '').trim();
+      if (key && value) {
+        map[key.toLowerCase()] = value;
+      }
+    });
+    return map;
+  }, [products]);
+
   const set = <K extends keyof FormState>(field: K, value: FormState[K]) =>
     setForm(f => ({ ...f, [field]: value }));
 
@@ -411,6 +423,17 @@ function ProductFormDialog({ product, onSave, onClose }: { product: Product | nu
       const suggested = foodCategoryMap[nextValue.toLowerCase()];
       if (suggested) {
         set('foodCategoryAR', suggested as FormState['foodCategoryAR']);
+      }
+    }
+  };
+
+  const handleAccessoryCategoryChange = (value: string) => {
+    const nextValue = value.trimStart();
+    set('accessoryCategory', nextValue as FormState['accessoryCategory']);
+    if (!form.accessoryCategoryAR) {
+      const suggested = accessoryCategoryMap[nextValue.toLowerCase()];
+      if (suggested) {
+        set('accessoryCategoryAR', suggested as FormState['accessoryCategoryAR']);
       }
     }
   };
@@ -463,6 +486,8 @@ function ProductFormDialog({ product, onSave, onClose }: { product: Product | nu
       price: form.price, images: cleanImages,
       foodCategory: form.foodCategory,
       foodCategoryAR: form.foodCategoryAR,
+      accessoryCategory: form.accessoryCategory,
+      accessoryCategoryAR: form.accessoryCategoryAR,
       specs: rowsToSpecs(form.specs),
       featured: form.featured,
     });
@@ -557,6 +582,38 @@ function ProductFormDialog({ product, onSave, onClose }: { product: Product | nu
                     value={form.foodCategoryAR || ''}
                     onChange={e => set('foodCategoryAR', e.target.value)}
                     placeholder="مثال: للقطط الصغيرة / للبالغين"
+                    dir="rtl"
+                    className="text-right"
+                  />
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Accessory-specific category (only for accessory type) */}
+          {form.type === 'accessory' && (
+            <div className="space-y-4 mt-2">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <Label>Accessory category (FR)</Label>
+                  <Input
+                    list="accessoryCategories"
+                    value={form.accessoryCategory || ''}
+                    onChange={e => handleAccessoryCategoryChange(e.target.value)}
+                    placeholder="Leash / Collar / Bed / Toy"
+                  />
+                  <datalist id="accessoryCategories">
+                    {Array.from(new Set((products || []).map(p => p.accessoryCategory).filter(Boolean))).map((c) => (
+                      <option key={c} value={c} />
+                    ))}
+                  </datalist>
+                </div>
+                <div className="space-y-1.5">
+                  <Label>فئة الملحق (AR)</Label>
+                  <Input
+                    value={form.accessoryCategoryAR || ''}
+                    onChange={e => set('accessoryCategoryAR', e.target.value)}
+                    placeholder="مثال: الأحزمة / الأطواق / الأسرة"
                     dir="rtl"
                     className="text-right"
                   />

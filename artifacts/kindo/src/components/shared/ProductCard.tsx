@@ -39,6 +39,11 @@ export function ProductCard({ product }: { product: Product }) {
               {product.foodCategory}
             </Badge>
           )}
+          {product.accessoryCategory && (
+            <Badge variant="outline" className="backdrop-blur-md bg-background/80 font-medium">
+              {product.accessoryCategory}
+            </Badge>
+          )}
         </div>
         {product.featured && (
           <div className="absolute top-2 ltr:left-2 rtl:right-2">

@@ -8,6 +8,8 @@ export interface Product {
   type: 'food' | 'accessory';
   foodCategory?: string;
   foodCategoryAR?: string;
+  accessoryCategory?: string;
+  accessoryCategoryAR?: string;
   price: number;
   images: string[];  // First image is the main one
   specs: Record<string, string>;

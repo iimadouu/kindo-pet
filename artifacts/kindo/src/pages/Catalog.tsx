@@ -73,6 +73,7 @@ export default function Catalog() {
         p.category.toLowerCase().includes(searchText) ||
         p.type.toLowerCase().includes(searchText) ||
         (p.foodCategory || '').toLowerCase().includes(searchText) ||
+        (p.accessoryCategory || '').toLowerCase().includes(searchText) ||
         t(`nav.${p.category}`).toLowerCase().includes(searchText) ||
         t(`nav.${p.type}`).toLowerCase().includes(searchText);
       
