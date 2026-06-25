@@ -90,10 +90,16 @@ export function Footer() {
         <div className="border-t border-border mt-12 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-muted-foreground">
           <p>&copy; {year} KINDO. {language === 'ar' ? 'جميع الحقوق محفوظة.' : 'Tous droits réservés.'}</p>
           <div className="flex gap-4">
-            <Link href="/privacy" className="hover:text-foreground transition-colors">
+            <Link 
+              href="/privacy" 
+              className="hover:text-foreground transition-colors py-2 px-1 active:scale-95 touch-manipulation"
+            >
               {t('legal.privacyPolicy')}
             </Link>
-            <Link href="/terms" className="hover:text-foreground transition-colors">
+            <Link 
+              href="/terms" 
+              className="hover:text-foreground transition-colors py-2 px-1 active:scale-95 touch-manipulation"
+            >
               {t('legal.termsOfUse')}
             </Link>
           </div>

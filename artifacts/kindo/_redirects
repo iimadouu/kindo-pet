@@ -1,0 +1,32 @@
+# Redirect Rules for Kindo Animalerie
+
+# HTTP to HTTPS
+http://kindopet.com/* https://kindopet.com/:splat
+http://www.kindopet.com/* https://kindopet.com/:splat
+
+# WWW to non-WWW
+https://www.kindopet.com/* https://kindopet.com/:splat
+
+# Language Redirects
+/en / 302
+/eng / 302
+
+# Old Product URLs to New Structure
+/produits/* /products/:splat 301
+/products/cat-food /products/nourriture-chats 301
+/products/dog-food /products/nourriture-chiens 301
+
+# Category Redirects
+/chiens /categories/chiens 301
+/chats /categories/chats 301
+/oiseaux /categories/oiseaux 301
+
+# Campaign Redirects
+/promo/* /promotions/:splat 301
+/soldes/* /promotions/:splat 301
+
+# Trailing Slash Normalization
+/:splat/ /:splat 301
+
+# 404 Handler
+/* /404.html 404

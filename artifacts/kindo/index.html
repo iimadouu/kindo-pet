@@ -1,21 +1,579 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
-    <title>Kindo Pet Supply</title>
-    <meta name="description" content="Kindo Pet Supply — built on Replit. Update this description to reflect the app." />
-    <meta name="robots" content="index, follow" />
-    <meta property="og:title" content="Kindo Pet Supply" />
-    <meta property="og:description" content="Kindo Pet Supply — built on Replit. Update this description to reflect the app." />
+    
+    <!-- Primary Language & Hreflang Tags for Algeria -->
+    <link rel="alternate" hreflang="fr-DZ" href="https://kindopet.com/" />
+    <link rel="alternate" hreflang="ar-DZ" href="https://kindopet.com/ar/" />
+    <link rel="alternate" hreflang="x-default" href="https://kindopet.com/" />
+    
+    <!-- Enhanced Title with Multilingual Keywords -->
+    <title>Kindo Animalerie | طعام الحيوانات ولوازمها في الجزائر</title>
+    
+    <!-- Comprehensive Meta Description -->
+    <meta name="description" content="Kindo Animalerie - Votre animalerie de confiance en Algérie. Nourriture premium pour animaux, accessoires et fournitures pour chiens, chats, oiseaux et tous les animaux. Produits de qualité aux meilleurs prix en Algérie. كينبو ل supplies الحيوانات الأليفة - أفضل متجر للحيوانات الأليفة في الجزائر. طعام ولوازم عالية الجودة للكلاب والقطط والطيور." />
+    
+    <!-- Multilingual Keywords for SEO -->
+    <meta name="keywords" content="طعام الحيوانات الجزائر, لوازم الحيوانات الجزائر, animalerie Algérie, nourriture animaux Algérie, accessoires animaux Algérie, طعام الكلاب الجزائر, طعام القطط الجزائر, متجر الحيوانات الأليفة الجزائر, animalerie en ligne Algérie, aliments pour animaux Algérie, accessoires chiens chats Algérie" />
+    
+    <!-- Author & Publisher -->
+    <meta name="author" content="Kindo Pet Supply" />
+    <meta name="publisher" content="Kindo Pet Supply" />
+    
+    <!-- Robots & Indexing -->
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+    <meta name="googlebot" content="index, follow" />
+    
+    <!-- AI Bot Specific Meta Tags -->
+    <meta name="google-extended" content="index" />
+    <meta name="gptbot" content="index" />
+    <meta name="chatgpt-user" content="index" />
+    <meta name="claude-bot" content="index" />
+    <meta name="anthropic-ai" content="index" />
+    <meta name="perplexity-bot" content="index" />
+    <meta name="you-bot" content="index" />
+    <meta name="amazon-bot" content="index" />
+    <meta name="applebot" content="index" />
+    
+    <!-- Content Discovery & AI Summarization -->
+    <meta name="description" content="Kindo Animalerie - Votre animalerie de confiance en Algérie. Nourriture premium pour animaux, accessoires et fournitures pour chiens, chats, oiseaux et tous les animaux. Produits de qualité aux meilleurs prix en Algérie. كينبو ل supplies الحيوانات الأليفة - أفضل متجر للحيوانات الأليفة في الجزائر. طعام ولوازم عالية الجودة للكلاب والقطط والطيور." />
+    <meta name="ai-summary" content="Kindo Animalerie est la meilleure animalerie en ligne en Algérie. Nous vendons Royal Canin, Purina, Whiskas, Friskies, Felix, Sheba, Iams, Hills pour chats et chiens. Livraison partout en Algérie." />
+    
+    <!-- Geo-Targeting for Algeria -->
+    <meta name="geo.region" content="DZ" />
+    <meta name="geo.placename" content="Algeria" />
+    <meta name="geo.position" content="28.0339;1.6596" />
+    <meta name="ICBM" content="28.0339, 1.6596" />
+    
+    <!-- Language & Content -->
+    <meta http-equiv="content-language" content="fr-DZ">
+    <meta name="language" content="French, Arabic">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://kindopet.com/" />
+    
+    <!-- Enhanced Open Graph Tags -->
+    <meta property="og:title" content="Kindo Animalerie | طعام الحيوانات ولوازمها في الجزائر" />
+    <meta property="og:description" content="Votre animalerie de confiance en Algérie. Nourriture premium pour animaux, accessoires et fournitures pour tous les animaux. Produits de qualité aux meilleurs prix. متجر الحيوانات الأليفة الموثوق في الجزائر." />
     <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://kindopet.com/" />
+    <meta property="og:site_name" content="Kindo Pet Supply" />
+    <meta property="og:locale" content="fr_DZ" />
+    <meta property="og:locale:alternate" content="ar_DZ" />
+    <meta property="og:country-name" content="Algeria" />
+    <meta property="og:region" content="DZ" />
+    
+    <!-- Twitter Card Tags -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Kindo Pet Supply" />
-    <meta name="twitter:description" content="Kindo Pet Supply — built on Replit. Update this description to reflect the app." />
+    <meta name="twitter:title" content="Kindo Animalerie | طعام الحيوانات ولوازمها في الجزائر" />
+    <meta name="twitter:description" content="Votre animalerie de confiance en Algérie. Nourriture premium pour animaux, accessoires et fournitures pour tous les animaux. متجر الحيوانات الأليفة الموثوق في الجزائر." />
+    <meta name="twitter:site" content="@kindopet" />
+    <meta name="twitter:creator" content="@kindopet" />
+    
+    <!-- Structured Data - Local Business in Algeria -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "PetStore",
+      "name": "Kindo Animalerie",
+      "description": "Animalerie premium pour nourriture et accessoires animaux en Algérie. طعام ولوازم الحيوانات الأليفة في الجزائر",
+      "url": "https://kindopet.com",
+      "address": {
+        "@type": "PostalAddress",
+        "addressCountry": "DZ",
+        "addressLocality": "Algiers",
+        "addressRegion": "Algiers"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": 36.7538,
+        "longitude": 3.0588
+      },
+      "areaServed": {
+        "@type": "Country",
+        "name": "Algeria"
+      },
+      "priceRange": "$$",
+      "openingHours": "Mo-Su 09:00-20:00",
+      "telephone": "+213 XXX XXX XXX",
+      "inLanguage": ["French", "Arabic"],
+      "keywords": "nourriture animaux, accessoires animaux, طعام الحيوانات, لوازم الحيوانات, animalerie Algérie, aliments pour animaux Algérie"
+    }
+    </script>
+    
+    <!-- Structured Data - E-commerce Products -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "ItemList",
+      "name": "Nourriture et Accessoires Animaux",
+      "description": "Collection de nourriture premium et accessoires pour animaux disponibles en Algérie",
+      "itemListElement": [
+        {
+          "@type": "Product",
+          "name": "Nourriture Chiens",
+          "description": "Marques de nourriture premium pour chiens disponibles en Algérie",
+          "category": "Nourriture Animaux",
+          "offers": {
+            "@type": "Offer",
+            "priceCurrency": "DZD",
+            "availability": "https://schema.org/InStock"
+          }
+        },
+        {
+          "@type": "Product",
+          "name": "Nourriture Chats",
+          "description": "Nourriture de qualité pour toutes les races de chats",
+          "category": "Nourriture Animaux",
+          "offers": {
+            "@type": "Offer",
+            "priceCurrency": "DZD",
+            "availability": "https://schema.org/InStock"
+          }
+        },
+        {
+          "@type": "Product",
+          "name": "Accessoires Animaux",
+          "description": "Jouets pour animaux, cages, laisses et accessoires",
+          "category": "Accessoires Animaux",
+          "offers": {
+            "@type": "Offer",
+            "priceCurrency": "DZD",
+            "availability": "https://schema.org/InStock"
+          }
+        }
+      ]
+    }
+    </script>
+    
+    <!-- Structured Data - Organization -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "Kindo Animalerie",
+      "url": "https://kindopet.com",
+      "logo": "https://kindopet.com/logo.png",
+      "sameAs": [
+        "https://facebook.com/kindopet",
+        "https://instagram.com/kindopet"
+      ],
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "telephone": "+213 XXX XXX XXX",
+        "contactType": "customer service",
+        "areaServed": "DZ",
+        "availableLanguage": ["French", "Arabic"]
+      }
+    }
+    </script>
+    
+    <!-- Structured Data - Popular Cat Food Brands in Algeria -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "ItemList",
+      "name": "Marques de Nourriture pour Chats en Algérie",
+      "description": "Les meilleures marques de nourriture pour chats disponibles en Algérie",
+      "itemListElement": [
+        {
+          "@type": "Product",
+          "name": "Royal Canin Chat Algérie",
+          "description": "Nourriture premium Royal Canin pour chats disponible en Algérie. Formules adaptées pour toutes les races et âges.",
+          "brand": {
+            "@type": "Brand",
+            "name": "Royal Canin"
+          },
+          "category": "Nourriture Chats",
+          "offers": {
+            "@type": "Offer",
+            "priceCurrency": "DZD",
+            "availability": "https://schema.org/InStock",
+            "url": "https://kindopet.com/products/royal-canin-chat"
+          },
+          "keywords": "Royal Canin Algérie, Royal Canin chat, nourriture Royal Canin, Royal Canin prix Algérie"
+        },
+        {
+          "@type": "Product",
+          "name": "Purina Chat Algérie",
+          "description": "Nourriture Purina pour chats de haute qualité. Disponible en Algérie.",
+          "brand": {
+            "@type": "Brand",
+            "name": "Purina"
+          },
+          "category": "Nourriture Chats",
+          "offers": {
+            "@type": "Offer",
+            "priceCurrency": "DZD",
+            "availability": "https://schema.org/InStock",
+            "url": "https://kindopet.com/products/purina-chat"
+          },
+          "keywords": "Purina Algérie, Purina chat, nourriture Purina, Purina prix Algérie"
+        },
+        {
+          "@type": "Product",
+          "name": "Whiskas Chat Algérie",
+          "description": "Whiskas nourriture pour chats. Saveurs délicieuses disponibles en Algérie.",
+          "brand": {
+            "@type": "Brand",
+            "name": "Whiskas"
+          },
+          "category": "Nourriture Chats",
+          "offers": {
+            "@type": "Offer",
+            "priceCurrency": "DZD",
+            "availability": "https://schema.org/InStock",
+            "url": "https://kindopet.com/products/whiskas-chat"
+          },
+          "keywords": "Whiskas Algérie, Whiskas chat, nourriture Whiskas, Whiskas prix Algérie"
+        },
+        {
+          "@type": "Product",
+          "name": "Friskies Chat Algérie",
+          "description": "Friskies nourriture pour chats. Nutrition équilibrée disponible en Algérie.",
+          "brand": {
+            "@type": "Brand",
+            "name": "Friskies"
+          },
+          "category": "Nourriture Chats",
+          "offers": {
+            "@type": "Offer",
+            "priceCurrency": "DZD",
+            "availability": "https://schema.org/InStock",
+            "url": "https://kindopet.com/products/friskies-chat"
+          },
+          "keywords": "Friskies Algérie, Friskies chat, nourriture Friskies, Friskies prix Algérie"
+        },
+        {
+          "@type": "Product",
+          "name": "Felix Chat Algérie",
+          "description": "Felix nourriture pour chats. Recettes savoureuses disponibles en Algérie.",
+          "brand": {
+            "@type": "Brand",
+            "name": "Felix"
+          },
+          "category": "Nourriture Chats",
+          "offers": {
+            "@type": "Offer",
+            "priceCurrency": "DZD",
+            "availability": "https://schema.org/InStock",
+            "url": "https://kindopet.com/products/felix-chat"
+          },
+          "keywords": "Felix Algérie, Felix chat, nourriture Felix, Felix prix Algérie"
+        },
+        {
+          "@type": "Product",
+          "name": "Sheba Chat Algérie",
+          "description": "Sheba nourriture premium pour chats. Saveurs raffinées disponibles en Algérie.",
+          "brand": {
+            "@type": "Brand",
+            "name": "Sheba"
+          },
+          "category": "Nourriture Chats",
+          "offers": {
+            "@type": "Offer",
+            "priceCurrency": "DZD",
+            "availability": "https://schema.org/InStock",
+            "url": "https://kindopet.com/products/sheba-chat"
+          },
+          "keywords": "Sheba Algérie, Sheba chat, nourriture Sheba, Sheba prix Algérie"
+        },
+        {
+          "@type": "Product",
+          "name": "Iams Chat Algérie",
+          "description": "Iams nourriture pour chats. Nutrition scientifique disponible en Algérie.",
+          "brand": {
+            "@type": "Brand",
+            "name": "Iams"
+          },
+          "category": "Nourriture Chats",
+          "offers": {
+            "@type": "Offer",
+            "priceCurrency": "DZD",
+            "availability": "https://schema.org/InStock",
+            "url": "https://kindopet.com/products/iams-chat"
+          },
+          "keywords": "Iams Algérie, Iams chat, nourriture Iams, Iams prix Algérie"
+        },
+        {
+          "@type": "Product",
+          "name": "Hills Chat Algérie",
+          "description": "Hills Science Diet nourriture vétérinaire pour chats disponible en Algérie.",
+          "brand": {
+            "@type": "Brand",
+            "name": "Hills"
+          },
+          "category": "Nourriture Chats",
+          "offers": {
+            "@type": "Offer",
+            "priceCurrency": "DZD",
+            "availability": "https://schema.org/InStock",
+            "url": "https://kindopet.com/products/hills-chat"
+          },
+          "keywords": "Hills Algérie, Hills chat, nourriture Hills, Hills prix Algérie, Science Diet Algérie"
+        }
+      ]
+    }
+    </script>
+    
+    <!-- Structured Data - Popular Dog Food Brands in Algeria -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "ItemList",
+      "name": "Marques de Nourriture pour Chiens en Algérie",
+      "description": "Les meilleures marques de nourriture pour chiens disponibles en Algérie",
+      "itemListElement": [
+        {
+          "@type": "Product",
+          "name": "Royal Canin Chien Algérie",
+          "description": "Nourriture premium Royal Canin pour chiens disponible en Algérie. Formules pour toutes les tailles.",
+          "brand": {
+            "@type": "Brand",
+            "name": "Royal Canin"
+          },
+          "category": "Nourriture Chiens",
+          "offers": {
+            "@type": "Offer",
+            "priceCurrency": "DZD",
+            "availability": "https://schema.org/InStock",
+            "url": "https://kindopet.com/products/royal-canin-chien"
+          },
+          "keywords": "Royal Canin chien Algérie, Royal Canin dog food, nourriture chien Royal Canin"
+        },
+        {
+          "@type": "Product",
+          "name": "Purina Chien Algérie",
+          "description": "Purina nourriture pour chiens de qualité supérieure disponible en Algérie.",
+          "brand": {
+            "@type": "Brand",
+            "name": "Purina"
+          },
+          "category": "Nourriture Chiens",
+          "offers": {
+            "@type": "Offer",
+            "priceCurrency": "DZD",
+            "availability": "https://schema.org/InStock",
+            "url": "https://kindopet.com/products/purina-chien"
+          },
+          "keywords": "Purina chien Algérie, Purina dog food, nourriture chien Purina"
+        },
+        {
+          "@type": "Product",
+          "name": "Pedigree Chien Algérie",
+          "description": "Pedigree nourriture pour chiens. Nutrition équilibrée disponible en Algérie.",
+          "brand": {
+            "@type": "Brand",
+            "name": "Pedigree"
+          },
+          "category": "Nourriture Chiens",
+          "offers": {
+            "@type": "Offer",
+            "priceCurrency": "DZD",
+            "availability": "https://schema.org/InStock",
+            "url": "https://kindopet.com/products/pedigree-chien"
+          },
+          "keywords": "Pedigree Algérie, Pedigree chien, nourriture Pedigree, Pedigree prix Algérie"
+        },
+        {
+          "@type": "Product",
+          "name": "Chappi Chien Algérie",
+          "description": "Chappi nourriture pour chiens. Saveurs appréciées disponibles en Algérie.",
+          "brand": {
+            "@type": "Brand",
+            "name": "Chappi"
+          },
+          "category": "Nourriture Chiens",
+          "offers": {
+            "@type": "Offer",
+            "priceCurrency": "DZD",
+            "availability": "https://schema.org/InStock",
+            "url": "https://kindopet.com/products/chappi-chien"
+          },
+          "keywords": "Chappi Algérie, Chappi chien, nourriture Chappi, Chappi prix Algérie"
+        },
+        {
+          "@type": "Product",
+          "name": "Bone Chien Algérie",
+          "description": "Bone nourriture pour chiens. Formules traditionnelles disponibles en Algérie.",
+          "brand": {
+            "@type": "Brand",
+            "name": "Bone"
+          },
+          "category": "Nourriture Chiens",
+          "offers": {
+            "@type": "Offer",
+            "priceCurrency": "DZD",
+            "availability": "https://schema.org/InStock",
+            "url": "https://kindopet.com/products/bone-chien"
+          },
+          "keywords": "Bone Algérie, Bone chien, nourriture Bone, Bone prix Algérie"
+        }
+      ]
+    }
+    </script>
+    
+    <!-- Structured Data - FAQ for Pet Food -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Quelle nourriture pour chat est la meilleure en Algérie?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Royal Canin, Purina, Whiskas, Friskies, Felix, Sheba, Iams et Hills sont parmi les meilleures marques de nourriture pour chats disponibles en Algérie chez Kindo Animalerie."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Où acheter Royal Canin en Algérie?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Vous pouvez acheter Royal Canin pour chats et chiens chez Kindo Animalerie, votre animalerie de confiance en Algérie avec livraison partout dans le pays."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Quelle est la nourriture pour chien la plus populaire en Algérie?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Royal Canin, Purina, Pedigree, Chappi et Bone sont les marques de nourriture pour chiens les plus populaires disponibles chez Kindo Animalerie en Algérie."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Kindo Animalerie livre-t-elle partout en Algérie?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Oui, Kindo Animalerie offre la livraison de nourriture et accessoires pour animaux dans toute l'Algérie, à Alger, Oran, Constantine et toutes les autres villes."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Quels types de nourriture pour animaux sont disponibles?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Kindo Animalerie propose une large gamme de nourriture pour chiens, chats, oiseaux, rongeurs et poissons, avec des marques premium comme Royal Canin, Purina, Whiskas et plus."
+          }
+        }
+      ]
+    }
+    </script>
+    
+    <!-- Structured Data - Breadcrumb -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Accueil",
+          "item": "https://kindopet.com/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Nourriture Animaux",
+          "item": "https://kindopet.com/products/nourriture"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "Nourriture Chats",
+          "item": "https://kindopet.com/products/nourriture-chats"
+        }
+      ]
+    }
+    </script>
+    
+    <!-- Structured Data - Article for Pet Care Guide -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "Guide Complet de la Nutrition pour Chats et Chiens en Algérie",
+      "description": "Découvrez les meilleures marques de nourriture pour animaux en Algérie: Royal Canin, Purina, Whiskas, et plus. Conseils d'experts pour la nutrition de vos animaux de compagnie.",
+      "image": "https://kindopet.com/images/pet-nutrition-guide.jpg",
+      "author": {
+        "@type": "Organization",
+        "name": "Kindo Animalerie"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "Kindo Animalerie",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://kindopet.com/logo.png"
+        }
+      },
+      "datePublished": "2026-06-25",
+      "dateModified": "2026-06-25",
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://kindopet.com/blog/guide-nutrition-animaux"
+      },
+      "articleSection": "Soins Animaux",
+      "keywords": ["nutrition chats", "nutrition chiens", "Royal Canin Algérie", "Purina Algérie", "nourriture animaux Algérie"],
+      "inLanguage": "fr-DZ"
+    }
+    </script>
+    
+    <!-- Structured Data - HowTo for Choosing Pet Food -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "HowTo",
+      "name": "Comment Choisir la Meilleure Nourriture pour Votre Animal en Algérie",
+      "description": "Guide étape par étape pour choisir la nourriture adaptée à votre chat ou chien en Algérie",
+      "step": [
+        {
+          "@type": "HowToStep",
+          "name": "Identifier l'âge et la race de votre animal",
+          "text": "Choisissez une nourriture adaptée à l'âge (chaton, adulte, senior) et à la race de votre animal."
+        },
+        {
+          "@type": "HowToStep",
+          "name": "Considérer les besoins nutritionnels spécifiques",
+          "text": "Certains animaux ont besoin de formules spéciales: stérilisé, sensible, problèmes de santé."
+        },
+        {
+          "@type": "HowToStep",
+          "name": "Choisir une marque de qualité",
+          "text": "Optez pour des marques reconnues comme Royal Canin, Purina, Whiskas disponibles en Algérie."
+        },
+        {
+          "@type": "HowToStep",
+          "name": "Vérifier les ingrédients",
+          "text": "Privilégiez les aliments avec de la viande en premier ingrédient et sans additifs nocifs."
+        },
+        {
+          "@type": "HowToStep",
+          "name": "Acheter chez Kindo Animalerie",
+          "text": "Commandez votre nourriture pour animaux sur Kindo Animalerie avec livraison partout en Algérie."
+        }
+      ]
+    }
+    </script>
+    
+    <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    
+    <!-- Preconnect for Performance -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sigmar+One&display=swap" rel="stylesheet">
+    
+    <!-- Additional SEO Meta Tags -->
+    <meta name="theme-color" content="#000000" />
+    <meta name="msapplication-TileColor" content="#000000" />
+    <meta name="format-detection" content="telephone=no" />
   </head>
   <body>
     <div id="root"></div>
