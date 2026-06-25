@@ -59,8 +59,6 @@ export function Navbar() {
     return `/catalog${params.toString() ? `?${params.toString()}` : ''}`;
   };
 
-  const [searchQuery, setSearchQuery] = useState('');
-
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
