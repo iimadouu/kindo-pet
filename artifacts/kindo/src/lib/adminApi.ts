@@ -21,8 +21,10 @@ export interface AdminProduct {
   id?: number;
   name: string;
   name_ar: string;
-  category: 'dogs' | 'cats' | 'birds' | 'fish';
+  category: 'dogs' | 'cats' | 'birds' | 'fish' | 'none';
   type: 'food' | 'accessory';
+  food_category?: string;
+  food_category_ar?: string;
   price: number;
   description: string;
   description_ar: string;

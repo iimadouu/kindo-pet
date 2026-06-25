@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useMemo } from 'react';
 import { useStore } from '@/lib/StoreContext';
 import { Product } from '@/data/catalog';
 import { Article } from '@/data/gallery';
@@ -61,7 +61,7 @@ function rowsToSpecs(rows: SpecRow[]): Record<string, string> {
 
 const EMPTY_PRODUCT: Omit<Product, 'id'> = {
   nameFR: '', nameAR: '', descriptionFR: '', descriptionAR: '',
-  category: 'dogs', type: 'food', price: 0, images: [''], specs: {}, featured: false,
+  category: 'dogs', type: 'food', foodCategory: '', foodCategoryAR: '', price: 0, images: [''], specs: {}, featured: false,
 };
 const EMPTY_ARTICLE: Omit<Article, 'id'> = {
   titleFR: '', titleAR: '', excerptFR: '', excerptAR: '',
@@ -96,6 +96,8 @@ export default function Admin() {
             <h1 className="text-4xl font-bold text-red-600" style={{ fontFamily: "'Sigmar One', cursive", WebkitTextStroke: '2px white', paintOrder: 'stroke fill' }}>KINDO</h1>
             <p className="text-slate-500 text-sm mt-1">Administration — Accès sécurisé</p>
           </div>
+
+          
           <form onSubmit={handleLogin} className="space-y-4">
             <div className="space-y-1.5">
               <Label htmlFor="pw">Mot de passe</Label>
@@ -385,8 +387,33 @@ function ProductFormDialog({ product, onSave, onClose }: { product: Product | nu
   const [images, setImages] = useState<string[]>(() => product?.images?.length ? product.images : ['']);
   const [uploading, setUploading] = useState(false);
 
+  const { products } = useStore();
+
+  const foodCategoryMap = useMemo(() => {
+    const map: Record<string, string> = {};
+    products.forEach(p => {
+      const key = (p.foodCategory || '').trim();
+      const value = (p.foodCategoryAR || '').trim();
+      if (key && value) {
+        map[key.toLowerCase()] = value;
+      }
+    });
+    return map;
+  }, [products]);
+
   const set = <K extends keyof FormState>(field: K, value: FormState[K]) =>
     setForm(f => ({ ...f, [field]: value }));
+
+  const handleFoodCategoryChange = (value: string) => {
+    const nextValue = value.trimStart();
+    set('foodCategory', nextValue as FormState['foodCategory']);
+    if (!form.foodCategoryAR) {
+      const suggested = foodCategoryMap[nextValue.toLowerCase()];
+      if (suggested) {
+        set('foodCategoryAR', suggested as FormState['foodCategoryAR']);
+      }
+    }
+  };
 
   /* specs */
   const updateSpec = (id: string, field: keyof SpecRow, value: string) =>
@@ -434,6 +461,8 @@ function ProductFormDialog({ product, onSave, onClose }: { product: Product | nu
       descriptionFR: form.descriptionFR, descriptionAR: form.descriptionAR,
       category: form.category, type: form.type,
       price: form.price, images: cleanImages,
+      foodCategory: form.foodCategory,
+      foodCategoryAR: form.foodCategoryAR,
       specs: rowsToSpecs(form.specs),
       featured: form.featured,
     });
@@ -482,6 +511,7 @@ function ProductFormDialog({ product, onSave, onClose }: { product: Product | nu
                   <SelectItem value="cats">🐈 Chats</SelectItem>
                   <SelectItem value="birds">🐦 Oiseaux</SelectItem>
                   <SelectItem value="fish">🐟 Poissons</SelectItem>
+                  <SelectItem value="none">❓ Sans catégorie</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -502,6 +532,38 @@ function ProductFormDialog({ product, onSave, onClose }: { product: Product | nu
                 placeholder="12500" />
             </div>
           </div>
+
+          {/* Food-specific category (only for food type) */}
+          {form.type === 'food' && (
+            <div className="space-y-4 mt-2">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <Label>Food category (FR)</Label>
+                  <Input
+                    list="foodCategories"
+                    value={form.foodCategory || ''}
+                    onChange={e => handleFoodCategoryChange(e.target.value)}
+                    placeholder="Kitten / Adult / Wet / Dry"
+                  />
+                  <datalist id="foodCategories">
+                    {Array.from(new Set((products || []).map(p => p.foodCategory).filter(Boolean))).map((c) => (
+                      <option key={c} value={c} />
+                    ))}
+                  </datalist>
+                </div>
+                <div className="space-y-1.5">
+                  <Label>فئة الطعام (AR)</Label>
+                  <Input
+                    value={form.foodCategoryAR || ''}
+                    onChange={e => set('foodCategoryAR', e.target.value)}
+                    placeholder="مثال: للقطط الصغيرة / للبالغين"
+                    dir="rtl"
+                    className="text-right"
+                  />
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Featured */}
           <div className="flex items-center gap-3 p-4 bg-amber-50 rounded-xl border border-amber-100">

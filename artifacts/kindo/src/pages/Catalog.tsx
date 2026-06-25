@@ -28,9 +28,10 @@ export default function Catalog() {
     initialCategory !== 'all' ? [initialCategory] : []
   );
   const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
+  const [priceRange, setPriceRange] = useState<[number, number]>([0, 1000000]);
   const [page, setPage] = useState(1);
 
-  const categories = ['dogs', 'cats', 'birds', 'fish'];
+  const categories = ['dogs', 'cats', 'birds', 'fish', 'none'];
   const types = ['food', 'accessory'];
 
   const handleCategoryToggle = (cat: string) => {
@@ -47,6 +48,18 @@ export default function Catalog() {
     setPage(1);
   };
 
+  const updatePriceRange = (index: 0 | 1, value: number) => {
+    setPriceRange(([min, max]) => {
+      if (index === 0) {
+        const nextMin = Math.min(value, max);
+        return [nextMin, max];
+      }
+      const nextMax = Math.max(value, min);
+      return [min, nextMax];
+    });
+    setPage(1);
+  };
+
   const filteredProducts = useMemo(() => {
     return products.filter(p => {
       // Search in French name, Arabic name, description, and keywords
@@ -56,13 +69,19 @@ export default function Catalog() {
         p.nameAR.toLowerCase().includes(searchText) ||
         (p.descriptionFR || '').toLowerCase().includes(searchText) ||
         (p.descriptionAR || '').toLowerCase().includes(searchText) ||
-        (p.keywords || '').toLowerCase().includes(searchText);
+        (p.keywords || '').toLowerCase().includes(searchText) ||
+        p.category.toLowerCase().includes(searchText) ||
+        p.type.toLowerCase().includes(searchText) ||
+        (p.foodCategory || '').toLowerCase().includes(searchText) ||
+        t(`nav.${p.category}`).toLowerCase().includes(searchText) ||
+        t(`nav.${p.type}`).toLowerCase().includes(searchText);
       
       const matchCategory = selectedCategories.length === 0 || selectedCategories.includes(p.category);
       const matchType = selectedTypes.length === 0 || selectedTypes.includes(p.type);
-      return matchSearch && matchCategory && matchType;
+      const matchPrice = p.price >= priceRange[0] && p.price <= priceRange[1];
+      return matchSearch && matchCategory && matchType && matchPrice;
     });
-  }, [products, search, selectedCategories, selectedTypes]);
+  }, [products, search, selectedCategories, selectedTypes, priceRange, t]);
 
   const totalPages = Math.ceil(filteredProducts.length / ITEMS_PER_PAGE);
   const currentProducts = filteredProducts.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE);
@@ -98,6 +117,38 @@ export default function Catalog() {
               <Label htmlFor={`type-${type}`} className="cursor-pointer">{t(`nav.${type}`)}</Label>
             </div>
           ))}
+        </div>
+      </div>
+      <Separator />
+      <div>
+        <h3 className="font-bold mb-4">{t('common.price')}</h3>
+        <div className="space-y-4 text-sm text-slate-600">
+          <div className="flex items-center justify-between">
+            <span>{t('common.min')}</span>
+            <span>{priceRange[0].toLocaleString('fr-DZ')} {t('common.currency')}</span>
+          </div>
+          <input
+            type="range"
+            min={0}
+            max={1000000}
+            step={1000}
+            value={priceRange[0]}
+            onChange={(e) => updatePriceRange(0, Number(e.target.value))}
+            className="w-full"
+          />
+          <div className="flex items-center justify-between">
+            <span>{t('common.max')}</span>
+            <span>{priceRange[1].toLocaleString('fr-DZ')} {t('common.currency')}</span>
+          </div>
+          <input
+            type="range"
+            min={0}
+            max={1000000}
+            step={1000}
+            value={priceRange[1]}
+            onChange={(e) => updatePriceRange(1, Number(e.target.value))}
+            className="w-full"
+          />
         </div>
       </div>
     </div>

@@ -34,6 +34,11 @@ export function ProductCard({ product }: { product: Product }) {
           <Badge variant="outline" className="backdrop-blur-md bg-background/80 font-medium">
             {t(`nav.${product.type}`)}
           </Badge>
+          {product.foodCategory && (
+            <Badge variant="outline" className="backdrop-blur-md bg-background/80 font-medium">
+              {product.foodCategory}
+            </Badge>
+          )}
         </div>
         {product.featured && (
           <div className="absolute top-2 ltr:left-2 rtl:right-2">

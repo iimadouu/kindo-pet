@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS products (
   name         TEXT NOT NULL,
   name_ar      TEXT,
   name_en      TEXT,
-  category     TEXT NOT NULL CHECK(category IN ('dogs','cats','birds','fish')),
+  category     TEXT NOT NULL CHECK(category IN ('dogs','cats','birds','fish','none')),
   type         TEXT NOT NULL DEFAULT 'food' CHECK(type IN ('food','accessory')),
   price        REAL NOT NULL DEFAULT 0,
   description  TEXT,
@@ -17,6 +17,8 @@ CREATE TABLE IF NOT EXISTS products (
   featured     INTEGER NOT NULL DEFAULT 0,
   keywords     TEXT,
   specs        TEXT,
+  food_category TEXT,
+  food_category_ar TEXT,
   created_at   TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at   TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
 );

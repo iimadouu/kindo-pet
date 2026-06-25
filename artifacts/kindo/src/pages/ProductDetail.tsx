@@ -98,6 +98,9 @@ export default function ProductDetail() {
           <div className="flex items-center gap-2 mb-4">
             <Badge variant="secondary">{t(`nav.${product.category}`)}</Badge>
             <Badge variant="outline">{t(`nav.${product.type}`)}</Badge>
+            {product.foodCategory && (
+              <Badge variant="outline">{product.foodCategory}</Badge>
+            )}
           </div>
 
           <h1 className="font-serif text-3xl md:text-5xl font-bold mb-4 leading-tight">{name}</h1>
