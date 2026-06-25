@@ -36,10 +36,22 @@ export default function Catalog() {
     return normalized === 'food' || normalized === 'accessory' ? normalized : '';
   };
 
+  const sanitizeQueryValue = (value: string | null) => {
+    if (!value) return '';
+    return value
+      .replace(/<[^>]*>/g, '')
+      .replace(/[\u0000-\u001f\u007f-\u009f]/g, '')
+      .replace(/\s+/g, ' ')
+      .trim();
+  };
+
+  const getQueryParam = (key: string) => sanitizeQueryValue(query.get(key));
+
   const parseList = (value: string | null) =>
-    value ? value.split(',').map(v => v.trim()).filter(Boolean) : [];
+    value ? value.split(',').map(v => sanitizeQueryValue(v)).filter(Boolean) : [];
 
   const [search, setSearch] = useState('');
+  const [rawSearch, setRawSearch] = useState('');
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
   const [selectedFoodCategories, setSelectedFoodCategories] = useState<string[]>([]);
@@ -48,11 +60,14 @@ export default function Catalog() {
   const [page, setPage] = useState(1);
 
   useEffect(() => {
-    setSearch(query.get('search') || '');
-    const categoryFromQuery = normalizeCategory(query.get('category') || query.get('categoy'));
+    const rawSearch = query.get('search') || '';
+    const sanitizedSearch = sanitizeQueryValue(rawSearch);
+    setSearch(sanitizedSearch);
+    setRawSearch(rawSearch);
+    const categoryFromQuery = normalizeCategory(getQueryParam('category') || getQueryParam('categoy'));
     const categoryFromPath = normalizeCategory(params.category || null);
     const typeFromPath = normalizeType(params.type || null);
-    const typeFromQuery = normalizeType(query.get('type'));
+    const typeFromQuery = normalizeType(getQueryParam('type'));
     const selectedCategory = categoryFromPath || categoryFromQuery || normalizeCategory(initialCategory);
     const selectedType = typeFromPath || typeFromQuery;
 
@@ -66,8 +81,8 @@ export default function Catalog() {
       setSelectedAccessoryCategories(params.subtype ? [params.subtype] : []);
       setSelectedFoodCategories([]);
     } else {
-      setSelectedFoodCategories(parseList(query.get('foodCategory')));
-      setSelectedAccessoryCategories(parseList(query.get('accessoryCategory')));
+      setSelectedFoodCategories(parseList(getQueryParam('foodCategory')));
+      setSelectedAccessoryCategories(parseList(getQueryParam('accessoryCategory')));
     }
 
     setPage(1);
@@ -148,19 +163,23 @@ export default function Catalog() {
   const filteredProducts = useMemo(() => {
     return products.filter(p => {
       // Search in French name, Arabic name, description, and keywords
-      const searchText = search.toLowerCase();
-      const matchSearch = search === '' || 
-        p.nameFR.toLowerCase().includes(searchText) ||
-        p.nameAR.toLowerCase().includes(searchText) ||
-        (p.descriptionFR || '').toLowerCase().includes(searchText) ||
-        (p.descriptionAR || '').toLowerCase().includes(searchText) ||
-        (p.keywords || '').toLowerCase().includes(searchText) ||
-        p.category.toLowerCase().includes(searchText) ||
-        p.type.toLowerCase().includes(searchText) ||
-        (p.foodCategory || '').toLowerCase().includes(searchText) ||
-        (p.accessoryCategory || '').toLowerCase().includes(searchText) ||
-        t(`nav.${p.category}`).toLowerCase().includes(searchText) ||
-        t(`nav.${p.type}`).toLowerCase().includes(searchText);
+      const normalizedSearch = sanitizeQueryValue(search);
+      const searchText = normalizedSearch.toLowerCase();
+      const matchSearch = rawSearch.trim() === ''
+        ? true
+        : (normalizedSearch !== '' && (
+            p.nameFR.toLowerCase().includes(searchText) ||
+            p.nameAR.toLowerCase().includes(searchText) ||
+            (p.descriptionFR || '').toLowerCase().includes(searchText) ||
+            (p.descriptionAR || '').toLowerCase().includes(searchText) ||
+            (p.keywords || '').toLowerCase().includes(searchText) ||
+            p.category.toLowerCase().includes(searchText) ||
+            p.type.toLowerCase().includes(searchText) ||
+            (p.foodCategory || '').toLowerCase().includes(searchText) ||
+            (p.accessoryCategory || '').toLowerCase().includes(searchText) ||
+            t(`nav.${p.category}`).toLowerCase().includes(searchText) ||
+            t(`nav.${p.type}`).toLowerCase().includes(searchText)
+          ));
       
       const productCategory = normalizeCategory(p.category);
       const matchCategory = selectedCategories.length === 0 || selectedCategories.includes(productCategory);
@@ -218,7 +237,7 @@ export default function Catalog() {
                 <span>{t('common.min')}</span>
                 <span>{priceRange[0].toLocaleString('fr-DZ')} {t('common.currency')}</span>
               </div>
-              <input
+            const matchSearch = rawSearch.trim() === ''
                 type="range"
                 min={0}
                 max={1000000}
@@ -323,8 +342,12 @@ export default function Catalog() {
             <Search className="absolute ltr:left-3 rtl:right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <Input
               placeholder={t('common.search')}
-              value={search}
-              onChange={(e) => { setSearch(e.target.value); setPage(1); }}
+              value={rawSearch}
+              onChange={(e) => {
+                setRawSearch(e.target.value);
+                setSearch(sanitizeQueryValue(e.target.value));
+                setPage(1);
+              }}
               className="ltr:pl-9 rtl:pr-9 w-full bg-background"
             />
           </div>

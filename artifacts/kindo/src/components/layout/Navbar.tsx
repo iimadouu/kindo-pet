@@ -32,6 +32,13 @@ export function Navbar() {
   const { products, cartItems, cartItemCount, cartTotal, setCartItemQuantity, removeCartItem, emptyCart } = useStore();
   const [searchQuery, setSearchQuery] = useState('');
 
+  const sanitizeQueryValue = (value: string) =>
+    value
+      .replace(/<[^>]*>/g, '')
+      .replace(/[\u0000-\u001f\u007f-\u009f]/g, '')
+      .replace(/\s+/g, ' ')
+      .trim();
+
   const cartProducts = cartItems
     .map(item => ({ item, product: products.find(product => product.id === item.productId) }))
     .filter((entry): entry is { item: CartItem; product: Product } => Boolean(entry.product));
@@ -123,8 +130,9 @@ export function Navbar() {
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    if (searchQuery.trim()) {
-      setLocation(`/catalog?search=${encodeURIComponent(searchQuery.trim())}`);
+    const sanitizedSearch = sanitizeQueryValue(searchQuery);
+    if (sanitizedSearch) {
+      setLocation(`/catalog?search=${encodeURIComponent(sanitizedSearch)}`);
       setMobileMenuOpen(false);
       setSearchQuery('');
     }
