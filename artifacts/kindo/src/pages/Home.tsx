@@ -109,7 +109,7 @@ export default function Home() {
             transition={{ duration: 0.8 }}
             className="max-w-3xl mx-auto text-white"
           >
-            <h1 className="font-serif text-5xl md:text-7xl font-bold mb-6 leading-tight">{t('home.heroTitle')}</h1>
+            <h1 className="font-serif text-3xl md:text-7xl font-bold mb-6 leading-tight">{t('home.heroTitle')}</h1>
             <p className="text-lg md:text-xl text-white/90 mb-10 max-w-2xl mx-auto font-light">{t('home.heroSubtitle')}</p>
             <Button size="lg" asChild className="text-base h-14 px-8 rounded-full">
               <Link href="/catalog">{t('home.heroCta')}</Link>
