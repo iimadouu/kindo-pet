@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { Link, useLocation } from 'wouter';
 import { useLanguage } from '@/i18n/LanguageContext';
 import { useTheme } from 'next-themes';
-import { Menu, X, Search, Moon, Sun, ShoppingBag } from 'lucide-react';
+import { Menu, X, Search, Moon, Sun, ShoppingBag, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useStore } from '@/lib/StoreContext';
@@ -95,8 +95,9 @@ export function Navbar() {
         <nav className="hidden md:flex items-center gap-6">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="sm" className={`text-sm font-medium transition-colors ${location.startsWith('/catalog') ? 'text-primary' : 'text-foreground/80'}`}>
+              <Button variant="ghost" size="sm" className={`inline-flex items-center gap-1 text-sm font-medium transition-colors ${location.startsWith('/catalog') ? 'text-primary' : 'text-foreground/80'}`}>
                 {t('nav.products')}
+                <ChevronDown className="h-3.5 w-3.5 stroke-current" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent sideOffset={8}>

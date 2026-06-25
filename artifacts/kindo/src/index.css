@@ -146,7 +146,8 @@
     @apply border-border;
   }
   body {
-    @apply font-sans antialiased bg-background text-foreground transition-colors duration-300;
+    @apply font-sans antialiased bg-background text-foreground transition-colors duration-300 overflow-y-scroll;
+    scrollbar-gutter: stable both-edges;
   }
   html[dir="rtl"] {
     @apply font-arabic;
