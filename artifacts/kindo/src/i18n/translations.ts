@@ -79,6 +79,10 @@ export const translations = {
       emailPlaceholder: "Votre email",
       messagePlaceholder: "Votre message",
       send: "Envoyer",
+    },
+    legal: {
+      privacyPolicy: "Politique de confidentialité",
+      termsOfUse: "Conditions générales",
     }
   },
   ar: {
@@ -161,6 +165,10 @@ export const translations = {
       emailPlaceholder: "البريد الإلكتروني",
       messagePlaceholder: "الرسالة",
       send: "إرسال",
+    },
+    legal: {
+      privacyPolicy: "سياسة الخصوصية",
+      termsOfUse: "الشروط العامة",
     }
   }
 };

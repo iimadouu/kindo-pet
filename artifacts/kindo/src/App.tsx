@@ -15,6 +15,8 @@ import ArticleDetail from "@/pages/ArticleDetail";
 import Checkout from "@/pages/Checkout";
 import About from "@/pages/About";
 import Contact from "@/pages/Contact";
+import PrivacyPolicy from "@/pages/PrivacyPolicy";
+import TermsOfUse from "@/pages/TermsOfUse";
 import Admin from "@/pages/Admin";
 import NotFound from "@/pages/not-found";
 
@@ -51,6 +53,8 @@ function Router() {
             <Route path="/checkout" component={Checkout} />
             <Route path="/about" component={About} />
             <Route path="/contact" component={Contact} />
+            <Route path="/privacy" component={PrivacyPolicy} />
+            <Route path="/terms" component={TermsOfUse} />
             <Route component={NotFound} />
           </Switch>
         </Layout>
