@@ -69,28 +69,26 @@ export function ProductCard({ product }: { product: Product }) {
       </CardContent>
 
       <CardFooter className="flex flex-col gap-3 p-4 pt-0">
-        <div className="flex flex-col gap-3 w-full">
-          <div className="flex items-center justify-between rounded-full border border-border bg-muted/50 px-3 py-2">
-            <span className="text-sm font-medium text-foreground/80">{t('common.quantity')}</span>
-            <div className="inline-flex items-center justify-center gap-1 rounded-full bg-background px-1.5 py-1">
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-8 w-8 rounded-full"
-                onClick={() => setQuantity(prev => Math.max(1, prev - 1))}
-              >
-                -
-              </Button>
-              <span className="w-8 text-center text-sm font-semibold">{quantity}</span>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-8 w-8 rounded-full"
-                onClick={() => setQuantity(prev => prev + 1)}
-              >
-                +
-              </Button>
-            </div>
+        <div className="flex flex-col gap-2 w-full">
+          <div className="text-sm font-medium text-foreground/80">{t('common.quantity')}</div>
+          <div className="flex items-center justify-center gap-2 rounded-full border border-border bg-muted/50 px-3 py-2">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8 rounded-full"
+              onClick={() => setQuantity(prev => Math.max(1, prev - 1))}
+            >
+              -
+            </Button>
+            <span className="w-8 text-center text-sm font-semibold">{quantity}</span>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8 rounded-full"
+              onClick={() => setQuantity(prev => prev + 1)}
+            >
+              +
+            </Button>
           </div>
 
           <Button
