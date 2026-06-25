@@ -1,6 +1,12 @@
 import { Product, fullCatalog } from '@/data/catalog';
 import { Article, gallery as staticGallery } from '@/data/gallery';
 
+export interface CartItem {
+  productId: string;
+  quantity: number;
+  price: number;
+}
+
 export interface KindoSettings {
   whatsappNumber: string;
   facebookUrl: string;
@@ -43,6 +49,7 @@ const KEYS = {
   products: 'kindo_products',
   gallery: 'kindo_gallery',
   settings: 'kindo_settings',
+  cart: 'kindo_cart',
 };
 
 function load<T>(key: string, fallback: T): T {
@@ -60,6 +67,10 @@ export function saveToStore<T>(key: string, data: T): void {
 }
 
 export const storeKeys = KEYS;
+
+export function loadCart(): CartItem[] {
+  return load<CartItem[]>(KEYS.cart, []);
+}
 
 export function loadProducts(): Product[] {
   return load<Product[]>(KEYS.products, fullCatalog);

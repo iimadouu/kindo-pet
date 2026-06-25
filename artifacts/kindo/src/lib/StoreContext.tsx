@@ -2,11 +2,13 @@ import React, { createContext, useContext, useState, useCallback, useMemo, useEf
 import { Product } from '@/data/catalog';
 import { Article } from '@/data/gallery';
 import {
+  CartItem,
   KindoSettings,
   DEFAULT_SETTINGS,
   loadProducts,
   loadGallery,
   loadSettings,
+  loadCart,
   saveToStore,
   storeKeys,
 } from '@/lib/store';
@@ -24,6 +26,13 @@ interface StoreContextValue {
   products: Product[];
   articles: Article[];
   settings: KindoSettings;
+  cartItems: CartItem[];
+  cartItemCount: number;
+  cartTotal: number;
+  addToCart: (product: Product, quantity: number) => void;
+  setCartItemQuantity: (productId: string, quantity: number) => void;
+  removeCartItem: (productId: string) => void;
+  emptyCart: () => void;
   loading: boolean;
   setProducts: (p: Product[]) => void;
   setArticles: (a: Article[]) => void;
@@ -52,6 +61,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   const [settings, setSettingsState] = useState<KindoSettings>(
     () => workerEnabled ? DEFAULT_SETTINGS : loadSettings()
   );
+  const [cartItems, setCartItemsState] = useState<CartItem[]>(() => loadCart());
   const [loading, setLoading] = useState(workerEnabled);
 
   useEffect(() => {
@@ -98,9 +108,63 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     if (workerEnabled) apiSaveSettings(s);
   }, []);
 
+  const persistCart = useCallback((items: CartItem[]) => {
+    setCartItemsState(items);
+    saveToStore(storeKeys.cart, items);
+  }, []);
+
+  const addToCart = useCallback((product: Product, quantity: number) => {
+    const nextQuantity = Math.max(1, quantity);
+    const updatedItems = cartItems.map(item =>
+      item.productId === product.id
+        ? { ...item, quantity: nextQuantity, price: product.price }
+        : item
+    );
+
+    if (!updatedItems.some(item => item.productId === product.id)) {
+      updatedItems.push({ productId: product.id, quantity: nextQuantity, price: product.price });
+    }
+
+    persistCart(updatedItems);
+  }, [cartItems, persistCart]);
+
+  const setCartItemQuantity = useCallback((productId: string, quantity: number) => {
+    persistCart(cartItems.map(item =>
+      item.productId === productId
+        ? { ...item, quantity: Math.max(1, quantity) }
+        : item
+    ));
+  }, [cartItems, persistCart]);
+
+  const removeCartItem = useCallback((productId: string) => {
+    persistCart(cartItems.filter(item => item.productId !== productId));
+  }, [cartItems, persistCart]);
+
+  const emptyCart = useCallback(() => {
+    persistCart([]);
+  }, [persistCart]);
+
+  const cartItemCount = cartItems.reduce((total, item) => total + item.quantity, 0);
+  const cartTotal = cartItems.reduce((total, item) => total + item.quantity * item.price, 0);
+
   const value = useMemo(
-    () => ({ products, articles, settings, loading, setProducts, setArticles, setSettings }),
-    [products, articles, settings, loading, setProducts, setArticles, setSettings]
+    () => ({
+      products,
+      articles,
+      settings,
+      cartItems,
+      cartItemCount,
+      cartTotal,
+      addToCart,
+      setCartItemQuantity,
+      removeCartItem,
+      emptyCart,
+      loading,
+      setProducts,
+      setArticles,
+      setSettings,
+    }),
+    [products, articles, settings, cartItems, cartItemCount, cartTotal, addToCart, setCartItemQuantity, removeCartItem, emptyCart, loading, setProducts, setArticles, setSettings]
   );
 
   return <StoreContext.Provider value={value}>{children}</StoreContext.Provider>;

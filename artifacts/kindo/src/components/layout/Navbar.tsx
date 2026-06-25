@@ -6,6 +6,9 @@ import { Menu, X, Search, Moon, Sun, ShoppingBag, ChevronDown } from 'lucide-rea
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useStore } from '@/lib/StoreContext';
+import { Product } from '@/data/catalog';
+import { CartItem } from '@/lib/store';
+import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -23,9 +26,15 @@ export function Navbar() {
   const { theme, setTheme } = useTheme();
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [cartMenuOpen, setCartMenuOpen] = useState(false);
+  const [cartSheetOpen, setCartSheetOpen] = useState(false);
   const [location, setLocation] = useLocation();
-  const { products } = useStore();
+  const { products, cartItems, cartItemCount, cartTotal, setCartItemQuantity, removeCartItem, emptyCart } = useStore();
   const [searchQuery, setSearchQuery] = useState('');
+
+  const cartProducts = cartItems
+    .map(item => ({ item, product: products.find(product => product.id === item.productId) }))
+    .filter((entry): entry is { item: CartItem; product: Product } => Boolean(entry.product));
 
   const animals = ['dogs', 'cats', 'birds', 'fish'];
   const productMenuItems = useMemo(() => {
@@ -48,6 +57,62 @@ export function Navbar() {
     });
     return items;
   }, [products]);
+
+  const cartPanel = (
+    <div className="space-y-3 w-full">
+      <div className="rounded-lg border border-border bg-popover p-3 text-sm">
+        <div className="font-semibold">{t('common.cart')}</div>
+        <div className="text-muted-foreground text-xs">
+          {cartItemCount} {t('common.quantity')} • {cartTotal.toLocaleString('fr-DZ')} {t('common.currency')}
+        </div>
+      </div>
+
+      {cartProducts.length === 0 ? (
+        <div className="rounded-lg border border-border bg-background p-4 text-sm text-muted-foreground">
+          {t('common.emptyCartNotice')}
+        </div>
+      ) : (
+        <div className="space-y-2">
+          {cartProducts.map(({ item, product }) => (
+            <div key={product.id} className="rounded-lg border border-border bg-background p-3">
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <div className="font-medium text-sm">{language === 'ar' ? product.nameAR : product.nameFR}</div>
+                  <div className="text-xs text-muted-foreground">
+                    {item.quantity} x {product.price.toLocaleString('fr-DZ')} {t('common.currency')}
+                  </div>
+                </div>
+                <div className="text-right text-sm font-semibold">
+                  {(item.quantity * product.price).toLocaleString('fr-DZ')} {t('common.currency')}
+                </div>
+              </div>
+              <div className="mt-3 flex items-center gap-2">
+                <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full" onClick={() => setCartItemQuantity(product.id, item.quantity - 1)}>
+                  -
+                </Button>
+                <span className="min-w-[2rem] text-center text-sm font-semibold">{item.quantity}</span>
+                <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full" onClick={() => setCartItemQuantity(product.id, item.quantity + 1)}>
+                  +
+                </Button>
+                <Button variant="ghost" size="sm" className="ml-auto" onClick={() => removeCartItem(product.id)}>
+                  {t('common.remove')}
+                </Button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      <div className="grid gap-2">
+        <Link href="/checkout" className="w-full" onClick={() => { setCartMenuOpen(false); setCartSheetOpen(false); }}>
+          <Button className="w-full">{t('common.checkout')}</Button>
+        </Link>
+        <Button variant="outline" className="w-full" onClick={emptyCart}>
+          {t('common.emptyCart')}
+        </Button>
+      </div>
+    </div>
+  );
 
   const buildCatalogUrl = ({ category, type, subtype }: { category?: string; type?: 'food' | 'accessory'; subtype?: string }) => {
     if (!category) return '/catalog';
@@ -164,6 +229,48 @@ export function Navbar() {
 
         {/* Actions */}
         <div className="flex items-center gap-2">
+          <DropdownMenu open={cartMenuOpen} onOpenChange={setCartMenuOpen}>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon" className="relative hidden md:inline-flex">
+                <ShoppingBag className="h-4 w-4" />
+                {cartItemCount > 0 && (
+                  <span className="absolute -top-1 -right-1 inline-flex h-4 min-w-[1rem] items-center justify-center rounded-full bg-primary px-1 text-[10px] font-semibold text-primary-foreground">
+                    {cartItemCount}
+                  </span>
+                )}
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent sideOffset={8} align="end" className="w-[22rem] p-2">
+              {cartPanel}
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          <Sheet open={cartSheetOpen} onOpenChange={setCartSheetOpen}>
+            <SheetTrigger asChild>
+              <Button variant="ghost" size="icon" className="relative md:hidden">
+                <ShoppingBag className="h-4 w-4" />
+                {cartItemCount > 0 && (
+                  <span className="absolute -top-1 -right-1 inline-flex h-4 min-w-[1rem] items-center justify-center rounded-full bg-primary px-1 text-[10px] font-semibold text-primary-foreground">
+                    {cartItemCount}
+                  </span>
+                )}
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="right" className="w-full max-w-sm p-0">
+              <div className="h-full flex flex-col">
+                <div className="border-b border-border px-4 py-4">
+                  <div className="text-lg font-semibold">{t('common.cart')}</div>
+                  <div className="text-sm text-muted-foreground">
+                    {cartItemCount} {t('common.quantity')} • {cartTotal.toLocaleString('fr-DZ')} {t('common.currency')}
+                  </div>
+                </div>
+                <div className="flex-1 overflow-y-auto p-4">
+                  {cartPanel}
+                </div>
+              </div>
+            </SheetContent>
+          </Sheet>
+
           <form onSubmit={handleSearch} className="hidden sm:flex relative w-48 lg:w-64">
             <Search className="absolute ltr:left-2 rtl:right-2 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
             <Input 

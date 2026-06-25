@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useLanguage } from '@/i18n/LanguageContext';
 import { Product } from '@/data/catalog';
 import { useStore } from '@/lib/StoreContext';
@@ -6,17 +6,22 @@ import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Link } from 'wouter';
-import { MessageCircle } from 'lucide-react';
 
 export function ProductCard({ product }: { product: Product }) {
   const { language, t } = useLanguage();
-  const { settings } = useStore();
+  const { cartItems, addToCart, removeCartItem } = useStore();
+
+  const cartItem = cartItems.find(item => item.productId === product.id);
+  const [quantity, setQuantity] = useState(cartItem?.quantity ?? 1);
+  const [isAdding, setIsAdding] = useState(false);
+
+  useEffect(() => {
+    setQuantity(cartItem?.quantity ?? 1);
+  }, [cartItem?.quantity]);
 
   const name = language === 'ar' ? product.nameAR : product.nameFR;
-  const message = encodeURIComponent(
-    `Bonjour Kindo, je souhaite commander: ${product.nameFR} (Réf: ${product.id})`
-  );
-  const whatsappUrl = `https://wa.me/${settings.whatsappNumber}?text=${message}`;
+  const lineTotal = product.price * quantity;
+  const actionLabel = cartItem ? t('common.updateCart') : t('common.addToCart');
 
   return (
     <Card className="overflow-hidden flex flex-col h-full hover-elevate transition-all duration-300 group border-card-border bg-card">
@@ -63,16 +68,49 @@ export function ProductCard({ product }: { product: Product }) {
         </div>
       </CardContent>
 
-      <CardFooter className="p-4 pt-0">
-        <Button
-          asChild
-          className="w-full bg-[#25D366] hover:bg-[#128C7E] text-white flex items-center justify-center gap-2 group/btn"
-        >
-          <a href={whatsappUrl} target="_blank" rel="noopener noreferrer">
-            <MessageCircle className="w-4 h-4 group-hover/btn:scale-110 transition-transform" />
-            <span className="font-medium">{t('common.orderViaWhatsapp')}</span>
-          </a>
-        </Button>
+      <CardFooter className="flex flex-col gap-3 p-4 pt-0">
+        <div className="grid grid-cols-[auto_1fr] gap-3 w-full items-center">
+          <div className="flex items-center space-x-1 rounded-full border border-border bg-muted/50 px-2 py-1">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8 rounded-full"
+              onClick={() => setQuantity(prev => Math.max(1, prev - 1))}
+            >
+              -
+            </Button>
+            <span className="min-w-[2rem] text-center font-semibold">{quantity}</span>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8 rounded-full"
+              onClick={() => setQuantity(prev => prev + 1)}
+            >
+              +
+            </Button>
+          </div>
+          <Button
+            className={`w-full ${isAdding ? 'scale-95' : ''}`}
+            onClick={() => {
+              addToCart(product, quantity);
+              setIsAdding(true);
+              window.setTimeout(() => setIsAdding(false), 180);
+            }}
+          >
+            {actionLabel}
+          </Button>
+        </div>
+        <div className="flex items-center justify-between text-sm text-muted-foreground">
+          <span>{t('common.total')}</span>
+          <span className="font-semibold">
+            {lineTotal.toLocaleString('fr-DZ')} {t('common.currency')}
+          </span>
+        </div>
+        {cartItem && (
+          <Button variant="outline" className="w-full" onClick={() => removeCartItem(product.id)}>
+            {t('common.remove')}
+          </Button>
+        )}
       </CardFooter>
     </Card>
   );
